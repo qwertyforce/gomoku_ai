@@ -28,8 +28,6 @@
         const FiguresToWin = 5;
         const Rows = GameBoard.length;
         const Columns = GameBoard[0].length
-        var last_i;
-        var last_j;
         var g_arr = []
         var h_arr = []
         for (var d = 0; d < 360; d = d + 45) {
@@ -46,22 +44,22 @@
            GameBoard[8][8]=-1;
            GameBoard[7][9]=1;
            GameBoard[8][9]=-1;
-            GameBoard[8][7]=1;
-            GameBoard[6][7]=-1;
-            GameBoard[7][8]=1;
-            GameBoard[7][6]=-1;
-           //  GameBoard[6][8]=1;
-           //  GameBoard[5][8]=-1;
-           //  GameBoard[4][9]=1;
-           //  GameBoard[8][5]=-1;
-           //  GameBoard[9][4]=1;
-           //  GameBoard[6][9]=-1;
-           //  GameBoard[8][10]=1;
-           //  GameBoard[5][7]=-1;
-           //  GameBoard[7][10]=1;
-           //  GameBoard[7][11]=-1;
-           //  GameBoard[5][10]=1;
-           //  GameBoard[6][10]=-1;
+            // GameBoard[8][7]=1;
+            // GameBoard[6][7]=-1;
+            // GameBoard[7][8]=1;
+            // GameBoard[7][6]=-1;
+            // GameBoard[6][8]=1;
+            // GameBoard[5][8]=-1;
+            // GameBoard[4][9]=1;
+            // GameBoard[8][5]=-1;
+            // GameBoard[9][4]=1;
+            // GameBoard[6][9]=-1;
+            // GameBoard[8][10]=1;
+            // GameBoard[5][7]=-1;
+            // GameBoard[7][10]=1;
+            // GameBoard[7][11]=-1;
+            // GameBoard[5][10]=1;
+            // GameBoard[6][10]=-1;
            // GameBoard[5][9]=1;
            // GameBoard[4][10]=-1;
            // GameBoard[9][5]=1;
@@ -148,9 +146,7 @@
             }
             return true;
         }
-var rgg=0;
         function Get_restrictions(Board) {
-            rgg++
             let min_r = Infinity;
             let min_c = Infinity;
             let max_r = -Infinity;
@@ -181,7 +177,6 @@ var rgg=0;
         }
 
                 function Change_restrictions(restrictions,i,j) {
-            rgg++
             let min_r = restrictions[0];
             let min_c = restrictions[1];
             let max_r = restrictions[2];
@@ -196,10 +191,6 @@ var rgg=0;
             }else if(j>max_c){
              max_c=j
             }
-            // min_r = Math.min(min_r, i)
-            // min_c = Math.min(min_c, j)
-            // max_r = Math.max(max_r, i)
-            // max_c = Math.max(max_c, j)
             if (min_r - 2 < 0) {
                 min_r = 2;
             }
@@ -271,9 +262,6 @@ var BoardGenerator_Cache={}
                         break;
                     }
                 }
-                if(stones===5){
-                    return 1337
-                }
                 if (empty === 0 || empty === 5) {
                     continue
                 }
@@ -313,7 +301,6 @@ var BoardGenerator_Cache={}
                     score += Scores[empty]
                 }
             }
-           
             return score;
         }
 
@@ -374,8 +361,8 @@ var BoardGenerator_Cache={}
             }
             return score;
         }
-
-        function evaluateState(restrictions, Board, player) {
+var StateCache={};
+        function evaluateState(restrictions, Board, player,hash) {
             let min_r = restrictions[0];
             let min_c = restrictions[1];
             let max_r = restrictions[2];
@@ -390,6 +377,7 @@ var BoardGenerator_Cache={}
                     }
                 }
             }
+            StateCache[hash]=score
             return score;
 
         }
@@ -584,7 +572,10 @@ var BoardGenerator_Cache={}
           return -2000000+(MaximumDepth-depth)
             }
                         if (depth === 0) {
-               return  evaluateState(restrictions, newBoard, player)
+                           if(StateCache[hash]!==undefined){
+                            return StateCache[hash]
+                           }
+               return  evaluateState(restrictions, newBoard, player,hash)
             }
               var  availSpots;
               // if(BoardGenerator_Cache[hash]!==undefined){
