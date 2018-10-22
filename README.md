@@ -1,2 +1,2 @@
 # gomoku_ai
-Experiments with variations of minimax algorithm
+Experiments with variations of minimax algorithm (WIP)
