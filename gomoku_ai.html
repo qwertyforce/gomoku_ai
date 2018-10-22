@@ -44,14 +44,14 @@
            GameBoard[8][8]=-1;
            GameBoard[7][9]=1;
            GameBoard[8][9]=-1;
-            // GameBoard[8][7]=1;
-            // GameBoard[6][7]=-1;
-            // GameBoard[7][8]=1;
-            // GameBoard[7][6]=-1;
-            // GameBoard[6][8]=1;
-            // GameBoard[5][8]=-1;
-            // GameBoard[4][9]=1;
-            // GameBoard[8][5]=-1;
+            GameBoard[8][7]=1;
+            GameBoard[6][7]=-1;
+            GameBoard[7][8]=1;
+            GameBoard[7][6]=-1;
+            GameBoard[6][8]=1;
+            GameBoard[5][8]=-1;
+            GameBoard[4][9]=1;
+            GameBoard[8][5]=-1;
             // GameBoard[9][4]=1;
             // GameBoard[6][9]=-1;
             // GameBoard[8][10]=1;
@@ -102,37 +102,37 @@
             // GameBoard[10][3]=-1;
             // GameBoard[8][2]=1;
             // GameBoard[9][1]=-1;
+      
+        function checkwin2(arr){
+for (var i = 0; i < arr.length-4; i++) {
+    if(arr[i]!==0){
+    if(arr[i]===arr[i+1] && arr[i]===arr[i+2] && arr[i]===arr[i+3] && arr[i]===arr[i+4]){
+        return true
+      }
+    }
 
-        function checkwin(restrictions, Game_Board, player) {
-            let min_r = restrictions[0];
-            let min_c = restrictions[1];
-            let max_r = restrictions[2];
-            let max_c = restrictions[3];
-            let r, g, h, won, xx, yy;
-            for (var i = min_r - 2; i <= max_r + 2; i++) {
-                for (var j = min_c - 2; j <= max_c + 2; j++) {
-                    for (var d = 0; d < 8; d++) {
-                        g = g_arr[d]
-                        h = h_arr[d]
-                        won = true;
-                        xx = i;
-                        yy = j;
-                        for (var ii = 0; ii < FiguresToWin; ii++) {
-                            if (xx < 0 || xx >= Rows || yy < 0 || yy >= Columns) {
-                                won = false;
-                                break;
-                            }
-                            if (Game_Board[xx][yy] !== player) {
-                                won = false;
-                                break;
-                            }
-                            xx += g;
-                            yy += h;
-                        }
-                        if (won == true) {
-                            return true;
-                        }
-                    }
+}
+        }
+        function get_directions(Board,x,y){
+             let score = 0;
+            let Directions = [[],[],[],[]];
+            for (var i = -4; i < 5; i++) {
+                if (x + i >= 0 && x + i <= 14) {
+                    Directions[0].push(Board[x + i][y])
+                }
+                if (y + i >= 0 && y + i <= 14) {
+                    Directions[1].push(Board[x][y + i])
+                }
+                if (y + i >= 0 && y + i <= 14 && x + i >= 0 && x + i <= 14) {
+                    Directions[2].push(Board[x + i][y + i])
+                }
+                if (y + i >= 0 && y + i <= 14 && x - i >= 0 && x - i <= 14) {
+                    Directions[3].push(Board[x - i][y + i])
+                }
+            }
+            for (var i = 0; i < 4; i++) {
+                if(checkwin2(Directions[i])){
+                    return true
                 }
             }
         }
@@ -515,7 +515,7 @@ var StateCache={};
         }else{
             b=g;
         }
-        result=negamax(Board, 1, d,b-1,b,hash(Board),restrictions)
+        result=negamax(Board, 1, d,b-1,b,hash(Board),restrictions,0,0)
         if(result!==undefined){
          g=result.score
          last_succesful=result
@@ -542,8 +542,7 @@ var StateCache={};
        return  temp;
        }
        var cch_hts=0
-       function negamax(newBoard, player, depth,a, b, hash,restrictions){
-      //  console.log(restrictions)
+       function negamax(newBoard, player, depth,a, b, hash,restrictions,last_i,last_j){
         var alphaOrig=a;
                     if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
                 CacheHits++;
@@ -563,13 +562,8 @@ var StateCache={};
                 }
             }
             fc++;
-            if (checkwin(restrictions, newBoard, -1)) {
-           // return -2000000+(MaximumDepth-depth)
-             return -2000000+(MaximumDepth-depth)
-            }
-            if (checkwin(restrictions, newBoard, 1)) { 
-        // return 2000000-(MaximumDepth-depth);
-          return -2000000+(MaximumDepth-depth)
+            if(get_directions(newBoard,last_i,last_j)){
+                return -2000000+(MaximumDepth-depth)
             }
                         if (depth === 0) {
                            if(StateCache[hash]!==undefined){
@@ -616,7 +610,7 @@ var StateCache={};
                     newHash = update_hash(hash, player, i, j)
                     newBoard[i][j] = player;
                     var restrictions_temp=Change_restrictions(restrictions,i,j)
-                   value=-negamax(newBoard, -player, depth-1, -b, -a, newHash,restrictions_temp)
+                   value=-negamax(newBoard, -player, depth-1, -b, -a, newHash,restrictions_temp,i,j)
                     newBoard[i][j] = 0; 
                     if(value>bestvalue){
                         bestvalue=value
@@ -648,82 +642,82 @@ var StateCache={};
                 
                       
        }
-       function negascout(newBoard, player, depth,alpha,beta, hash,maxDepth,restrictions){
-                var alphaOrig=alpha;
-                    if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
-                CacheHits++;
-                let score = Cache[hash].score;
-                if (Cache[hash].Flag === 0) {
-                    CacheCutoffs++;
-                    return score
-                }
-                if (Cache[hash].Flag === -1 ) {
-                    alpha=Math.max(alpha,score);
-                } else if (Cache[hash].Flag === 1 ) {
-                    beta=Math.min(beta,score);
-                }
-                if(alpha>=beta){
-                    CacheCutoffs++
-                    return score
-                }
-            }
-       fc++
+       // function negascout(newBoard, player, depth,alpha,beta, hash,maxDepth,restrictions){
+       //          var alphaOrig=alpha;
+       //              if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
+       //          CacheHits++;
+       //          let score = Cache[hash].score;
+       //          if (Cache[hash].Flag === 0) {
+       //              CacheCutoffs++;
+       //              return score
+       //          }
+       //          if (Cache[hash].Flag === -1 ) {
+       //              alpha=Math.max(alpha,score);
+       //          } else if (Cache[hash].Flag === 1 ) {
+       //              beta=Math.min(beta,score);
+       //          }
+       //          if(alpha>=beta){
+       //              CacheCutoffs++
+       //              return score
+       //          }
+       //      }
+       // fc++
         
-         if (checkwin(restrictions, newBoard, -1)) {
-                return -2000000+(maxDepth-depth)
-            }
-         if (checkwin(restrictions, newBoard, 1)) {
-                return -2000000+(maxDepth-depth);
-            }
-            if (depth === 0) {
-               return evaluateState(restrictions, newBoard, player)
-            }
-             var  availSpots= BoardGenerator(restrictions, newBoard, player); 
+       //   if (checkwin(restrictions, newBoard, -1)) {
+       //          return -2000000+(maxDepth-depth)
+       //      }
+       //   if (checkwin(restrictions, newBoard, 1)) {
+       //          return -2000000+(maxDepth-depth);
+       //      }
+       //      if (depth === 0) {
+       //         return evaluateState(restrictions, newBoard, player)
+       //      }
+       //       var  availSpots= BoardGenerator(restrictions, newBoard, player); 
 
-        if (availSpots.length === 0) {
-                return 0;
-            }
-            var b=beta;
-            var bestscore=-Infinity;
-            var i, j, score;
-            var newHash;
-            var bestmove;
-                        for (var y = 0; y < availSpots.length; y++) {
-                    i = availSpots[y].i;
-                    j = availSpots[y].j;
-                    newHash = update_hash(hash, player, i, j)
-                    newBoard[i][j] = player;
-                    var restrictions_temp=Change_restrictions(restrictions,i,j)
-                    score=-negascout(newBoard,-player,depth-1,-b,-alpha,newHash,maxDepth,restrictions_temp)
-                    if(score>alpha && score<beta && y>0){
-                      score=-negascout(newBoard,-player,depth-1,-beta,-score,newHash,maxDepth,restrictions_temp)  
-                    }
-                    if(score>bestscore){
-                        bestscore=score
-                        bestmove={i:i,j:j,score:score}
-                    }
-                    newBoard[i][j] = 0;
-                    alpha=Math.max(alpha,score)
-                    if(alpha>=beta){return alpha}
-                    b=alpha+1;
-            } 
-                CachePuts++
-                Cache[hash] = {score: bestscore};
-                Cache[hash].depth = depth;
-                if(bestscore<=alphaOrig){
-                  Cache[hash].Flag = 1  
-                }else if(bestscore>=beta){
-                  Cache[hash].Flag = -1  
-                }else{
-                    Cache[hash].Flag = 0
-                }
-                if(depth===maxDepth){
-                    return bestmove
-                }else{
-                    return bestscore  
-                }
+       //  if (availSpots.length === 0) {
+       //          return 0;
+       //      }
+       //      var b=beta;
+       //      var bestscore=-Infinity;
+       //      var i, j, score;
+       //      var newHash;
+       //      var bestmove;
+       //                  for (var y = 0; y < availSpots.length; y++) {
+       //              i = availSpots[y].i;
+       //              j = availSpots[y].j;
+       //              newHash = update_hash(hash, player, i, j)
+       //              newBoard[i][j] = player;
+       //              var restrictions_temp=Change_restrictions(restrictions,i,j)
+       //              score=-negascout(newBoard,-player,depth-1,-b,-alpha,newHash,maxDepth,restrictions_temp)
+       //              if(score>alpha && score<beta && y>0){
+       //                score=-negascout(newBoard,-player,depth-1,-beta,-score,newHash,maxDepth,restrictions_temp)  
+       //              }
+       //              if(score>bestscore){
+       //                  bestscore=score
+       //                  bestmove={i:i,j:j,score:score}
+       //              }
+       //              newBoard[i][j] = 0;
+       //              alpha=Math.max(alpha,score)
+       //              if(alpha>=beta){return alpha}
+       //              b=alpha+1;
+       //      } 
+       //          CachePuts++
+       //          Cache[hash] = {score: bestscore};
+       //          Cache[hash].depth = depth;
+       //          if(bestscore<=alphaOrig){
+       //            Cache[hash].Flag = 1  
+       //          }else if(bestscore>=beta){
+       //            Cache[hash].Flag = -1  
+       //          }else{
+       //              Cache[hash].Flag = 0
+       //          }
+       //          if(depth===maxDepth){
+       //              return bestmove
+       //          }else{
+       //              return bestscore  
+       //          }
             
-       }
+       // }
       //  function iterative_negamax(Board,depth){
       //   var MaxDepth=0;
       //   var bestmove;
