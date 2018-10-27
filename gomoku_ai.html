@@ -31,32 +31,32 @@ GameBoard[7][7] = 1;
 GameBoard[8][8] = -1;
 GameBoard[7][9] = 1;
 GameBoard[8][9] = -1;
-GameBoard[8][7] = 1;
-GameBoard[6][7] = -1;
-GameBoard[7][8] = 1;
-GameBoard[7][6] = -1;
-GameBoard[6][8] = 1;
-GameBoard[5][8] = -1;
-GameBoard[4][9] = 1;
-GameBoard[8][5] = -1;
-GameBoard[9][4] = 1;
-GameBoard[6][9] = -1;
-GameBoard[8][10] = 1;
-GameBoard[5][7] = -1;
-GameBoard[7][10] = 1;
-GameBoard[7][11] = -1;
-GameBoard[5][10] = 1;
-GameBoard[6][10] = -1;
-GameBoard[5][9] = 1;
-GameBoard[4][10] = -1;
-GameBoard[9][5] = 1;
-GameBoard[8][6] = -1;
-GameBoard[9][6] = 1;
-GameBoard[9][7] = -1;
-GameBoard[8][4] = 1;
-GameBoard[11][4] = -1;
-GameBoard[6][4] = 1;
-GameBoard[7][4] = -1;
+// GameBoard[8][7] = 1;
+// GameBoard[6][7] = -1;
+// GameBoard[7][8] = 1;
+// GameBoard[7][6] = -1;
+// GameBoard[6][8] = 1;
+// GameBoard[5][8] = -1;
+// GameBoard[4][9] = 1;
+// GameBoard[8][5] = -1;
+// GameBoard[9][4] = 1;
+// GameBoard[6][9] = -1;
+// GameBoard[8][10] = 1;
+// GameBoard[5][7] = -1;
+// GameBoard[7][10] = 1;
+// GameBoard[7][11] = -1;
+// GameBoard[5][10] = 1;
+// GameBoard[6][10] = -1;
+// GameBoard[5][9] = 1;
+// GameBoard[4][10] = -1;
+// GameBoard[9][5] = 1;
+// GameBoard[8][6] = -1;
+// GameBoard[9][6] = 1;
+// GameBoard[9][7] = -1;
+// GameBoard[8][4] = 1;
+// GameBoard[11][4] = -1;
+// GameBoard[6][4] = 1;
+// GameBoard[7][4] = -1;
 // GameBoard[7][3]=1;
 // GameBoard[6][2]=-1;
 // GameBoard[9][3]=1;
@@ -85,10 +85,7 @@ GameBoard[7][4] = -1;
 //  GameBoard[9][13]=-1;
 
 
-// GameBoard[11][9]=1;
-// GameBoard[10][3]=-1;
-// GameBoard[8][2]=1;
-// GameBoard[9][1]=-1;
+
 
 function check_directions(arr) {
     for (var i = 0; i < arr.length - 4; i++) {
@@ -100,15 +97,8 @@ function check_directions(arr) {
 
     }
 }
-
-function сheckwin(Board, x, y) {
-    let score = 0;
-    let Directions = [
-        [],
-        [],
-        [],
-        []
-    ];
+function get_directions(Board,x,y){
+     let Directions = [[],[],[],[]];
     for (var i = -4; i < 5; i++) {
         if (x + i >= 0 && x + i <= 14) {
             Directions[0].push(Board[x + i][y])
@@ -123,6 +113,11 @@ function сheckwin(Board, x, y) {
             Directions[3].push(Board[x - i][y + i])
         }
     }
+    return Directions
+}
+function checkwin(Board, x, y) {
+    let score = 0;
+    let Directions = get_directions(Board,x,y)
     for (var i = 0; i < 4; i++) {
         if (check_directions(Directions[i])) {
             return true
@@ -277,8 +272,7 @@ function test_direct(direction_arr, player) {
     let score = 0;
     let empty;
     let stones;
-    for (var i = 0;
-        (i + 4) < direction_arr.length; i++) {
+    for (var i = 0;(i + 4) < direction_arr.length; i++) {
         empty = 0;
         stones = 0;
         for (var j = 0; j <= 4; j++) {
@@ -308,26 +302,7 @@ function evalute_move(Board, x, y, player) {
     let score = 0;
     let prev_value = Board[x][y]
     Board[x][y] = player;
-    let Directions = [
-        [],
-        [],
-        [],
-        []
-    ];
-    for (var i = -4; i < 5; i++) {
-        if (x + i >= 0 && x + i <= 14) {
-            Directions[0].push(Board[x + i][y])
-        }
-        if (y + i >= 0 && y + i <= 14) {
-            Directions[1].push(Board[x][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x + i >= 0 && x + i <= 14) {
-            Directions[2].push(Board[x + i][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x - i >= 0 && x - i <= 14) {
-            Directions[3].push(Board[x - i][y + i])
-        }
-    }
+    let Directions = get_directions(Board,x,y);
     Board[x][y] = prev_value;
     for (var i = 0; i < 4; i++) {
         score += evaluate_direction(Directions[i], player);
@@ -339,26 +314,7 @@ function eval_test(Board, x, y, player) {
     let score = 0;
     let prev_value = Board[x][y]
     Board[x][y] = player;
-    let Directions = [
-        [],
-        [],
-        [],
-        []
-    ];
-    for (var i = -4; i < 5; i++) {
-        if (x + i >= 0 && x + i <= 14) {
-            Directions[0].push(Board[x + i][y])
-        }
-        if (y + i >= 0 && y + i <= 14) {
-            Directions[1].push(Board[x][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x + i >= 0 && x + i <= 14) {
-            Directions[2].push(Board[x + i][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x - i >= 0 && x - i <= 14) {
-            Directions[3].push(Board[x - i][y + i])
-        }
-    }
+    let Directions = get_directions(Board,x,y);
     Board[x][y] = prev_value;
     let temp_score;
     for (var i = 0; i < 4; i++) {
@@ -575,7 +531,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         }
     }
     fc++;
-    if (сheckwin(newBoard, last_i, last_j)) {
+    if (checkwin(newBoard, last_i, last_j)) {
         return -2000000 + (MaximumDepth - depth)
     }
     if (depth === 0) {
@@ -629,11 +585,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         if (value > bestvalue) {
             bestvalue = value
             if (depth == MaximumDepth) {
-                bestMove = {
-                    i: i,
-                    j: j,
-                    score: value
-                }
+                bestMove = {i: i,j: j,score: value}
             }
         }
         a = Math.max(a, value)
@@ -642,9 +594,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         }
     }
     CachePuts++
-    Cache[hash] = {
-        score: bestvalue
-    };
+    Cache[hash] = {score: bestvalue};
     Cache[hash].depth = depth
     if (bestvalue <= alphaOrig) {
         Cache[hash].Flag = 1
