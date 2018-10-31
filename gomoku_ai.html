@@ -102,16 +102,17 @@ function get_directions(Board,x,y){
     for (var i = -4; i < 5; i++) {
         if (x + i >= 0 && x + i <= 14) {
             Directions[0].push(Board[x + i][y])
+           if (y + i >= 0 && y + i <= 14 ) {
+            Directions[2].push(Board[x + i][y + i])
+        }
         }
         if (y + i >= 0 && y + i <= 14) {
             Directions[1].push(Board[x][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x + i >= 0 && x + i <= 14) {
-            Directions[2].push(Board[x + i][y + i])
-        }
-        if (y + i >= 0 && y + i <= 14 && x - i >= 0 && x - i <= 14) {
+              if (x - i >= 0 && x - i <= 14) {
             Directions[3].push(Board[x - i][y + i])
         }
+        }
+        
     }
     return Directions
 }
