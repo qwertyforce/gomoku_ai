@@ -117,7 +117,6 @@ function get_directions(Board,x,y){
     return Directions
 }
 function checkwin(Board, x, y) {
-    let score = 0;
     let Directions = get_directions(Board,x,y)
     for (var i = 0; i < 4; i++) {
         if (check_directions(Directions[i])) {
@@ -506,6 +505,10 @@ function iterative_mtdf(Board, maxdepth) {
     for (var i = 2; i <= maxdepth; i += 2) {
         MaximumDepth = i;
         temp = mtdf(Board, guess, i, restrictions)
+        // console.log(temp)
+        if (Math.abs(temp.score)>1999990){
+            return temp
+        }
         guess = temp.score
     }
     return temp;
@@ -773,11 +776,6 @@ var bestmove;
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
 function search() {
-    MaximumDepth = 2;
-    // bestmove=-negamax(GameBoard,-1, 2,-Infinity, Infinity, hash(GameBoard),Get_restrictions(GameBoard))
-    // if(bestmove.score=== 1999999){
-    //  console.log(bestmove)
-    // }else{
     MaximumDepth = 6;
     var t0 = performance.now();
     bestmove = iterative_mtdf(GameBoard, MaximumDepth)
@@ -789,7 +787,7 @@ function search() {
     console.log("nodes searched: " + fc)
     console.log("Call to iterative mtdf took " + (t1 - t0) / 1000 + " seconds.")
 }
-// }
+ 
 search()
 </script>              
 </head>
