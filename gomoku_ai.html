@@ -127,9 +127,9 @@ function checkwin(Board, x, y) {
 
 function remoteCell(Board, r, c) {
     for (var i = r - 2; i <= r + 2; i++) {
-        if (i < 0 || i >= GameBoard.length) continue;
+        if (i < 0 || i >= Rows) continue;
         for (var j = c - 2; j <= c + 2; j++) {
-            if (j < 0 || j >= GameBoard[0].length) continue;
+            if (j < 0 || j >= Columns) continue;
             if (Board[i][j] !== 0) return false;
         }
     }
@@ -141,8 +141,8 @@ function Get_restrictions(Board) {
     let min_c = Infinity;
     let max_r = -Infinity;
     let max_c = -Infinity;
-    for (var i = 0; i < Board.length; i++) {
-        for (var j = 0; j < Board[0].length; j++) {
+    for (var i = 0; i < Rows; i++) {
+        for (var j = 0; j < Columns; j++) {
             if (Board[i][j] !== 0) {
                 min_r = Math.min(min_r, i)
                 min_c = Math.min(min_c, j)
@@ -157,11 +157,11 @@ function Get_restrictions(Board) {
     if (min_c - 2 < 0) {
         min_c = 2;
     }
-    if (max_r + 2 >= Board.length) {
-        max_r = Board.length - 3;
+    if (max_r + 2 >= Rows) {
+        max_r = Rows - 3;
     }
-    if (max_c + 2 >= Board[0].length) {
-        max_c = Board[0].length - 3;
+    if (max_c + 2 >= Columns) {
+        max_c = Columns - 3;
     }
     return [min_r, min_c, max_r, max_c]
 }
@@ -243,8 +243,7 @@ function evaluate_direction(direction_arr, player) {
     let score = 0;
     let empty;
     let stones;
-    for (var i = 0;
-        (i + 4) < direction_arr.length; i++) {
+    for (var i = 0;(i + 4) < direction_arr.length; i++) {
         empty = 0;
         stones = 0;
         for (var j = 0; j <= 4; j++) {
@@ -500,7 +499,7 @@ function mtdf(Board, f, d, restrictions) {
 function iterative_mtdf(Board, maxdepth) {
     var restrictions = Get_restrictions(Board)
     var guess = evaluateState(restrictions, Board, 1);
-    console.log(guess)
+    console.log(`Guess for best score: ${guess}`)
     var temp;
     for (var i = 2; i <= maxdepth; i += 2) {
         MaximumDepth = i;
@@ -608,7 +607,6 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         Cache[hash].Flag = 0
     }
     if (depth == MaximumDepth) {
-
         return bestMove
     } else {
         return bestvalue
@@ -781,11 +779,11 @@ function search() {
     bestmove = iterative_mtdf(GameBoard, MaximumDepth)
     var t1 = performance.now();
     console.log(bestmove)
-    console.log("Cache Hits: " + CacheHits)
-    console.log("Cache Cutoffs: " + CacheCutoffs)
-    console.log("Cache Puts: " + CachePuts)
-    console.log("nodes searched: " + fc)
-    console.log("Call to iterative mtdf took " + (t1 - t0) / 1000 + " seconds.")
+    console.log(`Cache Hits: ${CacheHits}`)
+    console.log(`Cache Cutoffs: ${CacheCutoffs}`)
+    console.log(`Cache Puts: ${CachePuts}`)
+    console.log(`Nodes searched: ${fc}`)
+    console.log(`Call to iterative mtdf took ${(t1 - t0) / 1000} seconds.`)
 }
  
 search()
