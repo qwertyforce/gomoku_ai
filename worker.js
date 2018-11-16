@@ -711,10 +711,10 @@ var Cutoffs = 0;
 var CacheCutoffs = 0;
 var CachePuts = 0;
 function search() {
-    MaximumDepth = 6;
     var t0 = performance.now();
     let bestmove = iterative_mtdf(GameBoard, MaximumDepth)
     var t1 = performance.now();
+    Cache={}
     return({
         bestmove:bestmove,
         CacheHits:CacheHits,
@@ -729,6 +729,8 @@ onmessage = function(e) {
     var x=e.data[1]
     var y=e.data[2]
     var Turn=e.data[3]
+    var Depth=e.data[4]
+    MaximumDepth=Depth
     console.log(e.data)
   if(Board){
     console.log(e.data)
@@ -736,12 +738,12 @@ onmessage = function(e) {
     var results=search();
     postMessage(results)
   }
-  if(x !== undefined&&y!== undefined&&Turn===1&&GameBoard[x][y]===0){
+  if(x !== undefined&&y!== undefined&&Turn===-1&&GameBoard[x][y]===0){
     GameBoard[x][y]=Turn
     var results=search();
     postMessage(results)
   }
-  if(x !== undefined&&y!== undefined&&Turn===-1&&GameBoard[x][y]===0){
+  if(x !== undefined&&y!== undefined&&Turn===1&&GameBoard[x][y]===0){
     GameBoard[x][y]=Turn
   }
 

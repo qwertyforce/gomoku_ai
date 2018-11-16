@@ -89,7 +89,8 @@ Engine.onmessage = function(e) {
     console.log(`Call to iterative mtdf took ${e.data.time} seconds.`)
     }
 //var x=JSON.stringify(GameBoard)
-Engine.postMessage([GameBoard,x,y,1]);
+var Depth=6;
+Engine.postMessage([undefined,x,y,1,Depth]);
 </script>              
 </head>
 </html>
