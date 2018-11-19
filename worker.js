@@ -22,7 +22,7 @@ var fc = 0;
 const FiguresToWin = 5;
 const Rows = GameBoard.length;
 const Columns = GameBoard[0].length
-
+const WIN_DETECTED=false;
 function check_directions(arr) {
     for (var i = 0; i < arr.length - 4; i++) {
         if (arr[i] !== 0) {
@@ -155,8 +155,8 @@ function BoardGenerator(restrictions, Board, player) {
                 move.i = i;
                 move.j = j;
                 // move.score = evalute_move(Board, i, j, player)
-                move.score = eval_test(Board, i, j, player)
-                if (move.score === -1) {
+                move.score = evalute_move(Board, i, j, player)
+                if (move.score === WIN_DETECTED) {
                     //BoardGenerator_Cache[hash]=move
                     return [move]
                 }
@@ -174,7 +174,6 @@ function BoardGenerator(restrictions, Board, player) {
     return availSpots_score;
 }
 var Scores = [19, 15, 11, 7, 3]
-
 function evaluate_direction(direction_arr, player) {
     let score = 0;
     let empty;
@@ -191,36 +190,8 @@ function evaluate_direction(direction_arr, player) {
                 break;
             }
         }
-        if (empty === 0 || empty === 5) {
-            continue
-        }
-
-        if ((stones + empty) === 5) {
-            score += Scores[empty]
-        }
-    }
-
-    return score;
-}
-
-function test_direct(direction_arr, player) {
-    let score = 0;
-    let empty;
-    let stones;
-    for (var i = 0;(i + 4) < direction_arr.length; i++) {
-        empty = 0;
-        stones = 0;
-        for (var j = 0; j <= 4; j++) {
-            if (direction_arr[i + j] === 0) {
-                empty++;
-            } else if (direction_arr[i + j] === player) {
-                stones++
-            } else {
-                break;
-            }
-        }
         if (stones === 5) {
-            return 1337
+            return WIN_DETECTED
         }
         if (empty === 5) {
             continue
@@ -239,23 +210,11 @@ function evalute_move(Board, x, y, player) {
     Board[x][y] = player;
     let Directions = get_directions(Board,x,y);
     Board[x][y] = prev_value;
-    for (var i = 0; i < 4; i++) {
-        score += evaluate_direction(Directions[i], player);
-    }
-    return score;
-}
-
-function eval_test(Board, x, y, player) {
-    let score = 0;
-    let prev_value = Board[x][y]
-    Board[x][y] = player;
-    let Directions = get_directions(Board,x,y);
-    Board[x][y] = prev_value;
     let temp_score;
     for (var i = 0; i < 4; i++) {
-        temp_score = test_direct(Directions[i], player);
-        if (temp_score === 1337) {
-            return -1
+        temp_score = evaluate_direction(Directions[i], player);
+        if (temp_score === WIN_DETECTED) {
+            return WIN_DETECTED
         } else {
             score += temp_score
         }
