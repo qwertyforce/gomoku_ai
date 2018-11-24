@@ -306,8 +306,6 @@ function update_hash(hash, player, row, col) {
 //     }
 //     bestmoves.unshift(bestmove)
 // }
-var startTime = Date.now();
-var MaxTime = 3000; //ms
 // function minimax(newBoard, player, depth,a, b, hash,maxDepth){
 //         fc++
 //         var  restrictions = Get_restrictions(newBoard)
@@ -674,6 +672,7 @@ function search() {
     let bestmove = iterative_mtdf(GameBoard, MaximumDepth)
     var t1 = performance.now();
     Cache={}
+    StateCache={}
     return({
         bestmove:bestmove,
         CacheHits:CacheHits,
