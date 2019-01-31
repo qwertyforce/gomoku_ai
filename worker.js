@@ -454,22 +454,6 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     var newHash;
     var bestvalue = -Infinity
     var value;
-    //quickwinsearch
-    //       for (var y = 0; y < availSpots.length; y++) {
-    //      let score=-2000000+(MaximumDepth-depth);
-    //         i = availSpots[y].i;
-    //         j = availSpots[y].j;
-    //         newBoard[i][j] = player;
-    //         if (checkwin(restrictions,newBoard, player)) {
-    //             newBoard[i][j] = 0;
-    //         if(MaximumDepth===depth){
-    //             return {i:i,j:j,score:-player*(score+1)}
-    //         }
-
-    //                return -player*(score)
-    //         }
-    //         newBoard[i][j] = 0;
-    // }  
 
     for (var y = 0; y < availSpots.length; y++) {
         i = availSpots[y].i;
