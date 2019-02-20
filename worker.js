@@ -675,7 +675,6 @@ onmessage = function(e) {
     MaximumDepth=Depth
     console.log(e.data)
   if(Board){
-    console.log(e.data)
     GameBoard=Board;
     var results=search();
     postMessage(results)
