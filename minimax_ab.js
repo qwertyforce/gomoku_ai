@@ -7,7 +7,7 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], //7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
@@ -165,12 +165,6 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-
-    //BoardGenerator_Cache[hash]=availSpots_score;
-
-    //                if(availSpots_score.length>40){
-    //     return availSpots_score.slice(0,40)
-    // }
     return availSpots_score;
 }
 var Scores = [19, 15, 11, 7, 3]
@@ -296,51 +290,6 @@ function update_hash(hash, player, row, col) {
 }
 
 
-function mtdf(Board, f, d, restrictions) {
-    var g = f;
-    var upperbound = Infinity;
-    var lowerbound = -Infinity;
-    var b;
-    var result
-    var last_succesful;
-    do {
-        if (g === lowerbound) {
-            b = g + 1
-        } else {
-            b = g;
-        }
-        result = negamax(Board, 1, d, b - 1, b, hash(Board), restrictions, 0, 0)
-        if (result !== undefined) {
-            g = result.score
-            last_succesful = result
-        }
-        if (g < b) {
-            upperbound = g
-        } else {
-            lowerbound = g
-        }
-    } while (lowerbound < upperbound)
-    return last_succesful;
-}
-
-function iterative_mtdf(Board, maxdepth) {
-    var restrictions = Get_restrictions(Board)
-    var guess = evaluateState(restrictions, Board, 1);
-    console.log(`Guess for best score: ${guess}`)
-    var temp;
-    for (var i = 2; i <= maxdepth; i += 2) {
-        MaximumDepth = i;
-        temp = mtdf(Board, guess, i, restrictions)
-        // console.log(temp)
-        if (Math.abs(temp.score)>1999990){
-            return temp
-        }
-        guess = temp.score
-    }
-    return temp;
-}
-var cch_hts = 0
-
 function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last_j) {
     const alphaOrig = a;
     if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
@@ -372,12 +321,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         return evaluateState(restrictions, newBoard, player, hash)
     }
     var availSpots;
-    // if(BoardGenerator_Cache[hash]!==undefined){
-    //   availSpots=BoardGenerator_Cache[hash];
-    //   cch_hts++
-    // }else{
     availSpots = BoardGenerator(restrictions, newBoard, player);
-    // }
     if (availSpots.length === 0) {
         return 0;
     }
@@ -418,14 +362,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         Cache[hash].Flag = 0
     }
     if (depth == MaximumDepth) {
+        console.log(1)
         return bestMove
     } else {
         return bestvalue
     }
-
-
 }
-
 
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
@@ -434,14 +376,16 @@ var CacheHits = 0;
 var Cutoffs = 0;
 var CacheCutoffs = 0;
 var CachePuts = 0;
+var cch_hts = 0;
 var cch_pts=0;
-function search() {
-    var t0 = performance.now();
-    let bestmove = iterative_mtdf(GameBoard, MaximumDepth)
+function search(player,depth) {
+    MaximumDepth=depth;
+    var t0 = performance.now(); 
+    let bestmove =  negamax(GameBoard, player, depth, -Infinity, Infinity, hash(GameBoard), Get_restrictions(GameBoard), 0,0)
     var t1 = performance.now();
     Cache={}
     StateCache={}
-    return({
+   console.log({
         bestmove:bestmove,
         CacheHits:CacheHits,
         CacheCutoffs:CacheCutoffs,
@@ -451,27 +395,4 @@ function search() {
         fc:fc,
         time:(t1 - t0) / 1000
     })
-}
-onmessage = function(e) { 
-    var Board=e.data[0]
-    var x=e.data[1]
-    var y=e.data[2]
-    var Turn=e.data[3]
-    var Depth=e.data[4]
-    MaximumDepth=Depth
-    console.log(e.data)
-  if(Board){
-    GameBoard=Board;
-    var results=search();
-    postMessage(results)
-  }
-  if(x !== undefined&&y!== undefined&&Turn===-1&&GameBoard[x][y]===0){
-    GameBoard[x][y]=Turn
-    var results=search();
-    postMessage(results)
-  }
-  if(x !== undefined&&y!== undefined&&Turn===1&&GameBoard[x][y]===0){
-    GameBoard[x][y]=Turn
-  }
-
 }

@@ -239,8 +239,7 @@ function evaluateState(restrictions, Board, player, hash) {
             }
         }
     }
-    StateCache[hash] = score;
-    cch_pts++;
+    StateCache[hash] = score
     return score;
 
 }
@@ -295,7 +294,74 @@ function update_hash(hash, player, row, col) {
     return hash
 }
 
+// function Get_last_best() {
+//     return bestmoves;
+// }
 
+// function Set_last_best(bestmove) {
+//     for (var i = 0; i < bestmoves.length; i++) {
+//         if(bestmoves[i].i===bestmove.i && bestmoves[i].j===bestmove.j){
+//            bestmoves.splice(i, 1);
+//         }
+//     }
+//     bestmoves.unshift(bestmove)
+// }
+// function minimax(newBoard, player, depth,a, b, hash,maxDepth){
+//         fc++
+//         var  restrictions = Get_restrictions(newBoard)
+//         if (checkwin(restrictions, newBoard, huPlayer)) {
+//             return (maxDepth-depth) - 2000000;
+//         }
+//         if (checkwin(restrictions, newBoard, aiPlayer)) {
+//             return 2000000 - (maxDepth-depth);
+//         }
+//         if (depth === 0) {
+//            return evaluateState(restrictions, newBoard, player)
+//         }
+//         var  availSpots = BoardGenerator(restrictions, newBoard, player); 
+//         if (availSpots.length === 0) {
+//             return 0;
+//         }
+//         var bestMove;
+//         var i, j, score;
+//         var newHash;
+//         if(player===1){
+//          for (var y = 0; y < availSpots.length; y++) {
+//                 i = availSpots[y].i;
+//                 j = availSpots[y].j;
+//                 newHash = update_hash(hash, player, i, j)
+//                 newBoard[i][j] = player;
+//                 score=minimax(newBoard, -player, depth-1,a, b, newHash,maxDepth)
+//                 newBoard[i][j] = 0;
+//                 if(score>a){
+//                     a=score;
+//                     if (depth===maxDepth){
+//                         bestMove={i:i,j:j,score:score}
+//                     }
+//                 }
+//                 if (a>=b){break;}
+//           }   
+//           if (depth===maxDepth){
+//             return bestMove
+//           }else{
+//             return a
+//           }
+
+//         }else{
+//           for (var y = 0; y < availSpots.length; y++) {
+//                 i = availSpots[y].i;
+//                 j = availSpots[y].j;
+//                 newHash = update_hash(hash, player, i, j)
+//                 newBoard[i][j] = player;
+//                 score=minimax(newBoard, -player, depth-1,a, b, newHash,maxDepth)
+//                 newBoard[i][j] = 0;
+//                 b=Math.min(b,score)
+//                 if (a>=b){break;}
+//           }   
+//             return b
+
+//         }
+// }
 function mtdf(Board, f, d, restrictions) {
     var g = f;
     var upperbound = Infinity;
@@ -313,6 +379,7 @@ function mtdf(Board, f, d, restrictions) {
         if (result !== undefined) {
             g = result.score
             last_succesful = result
+            //Set_last_best(result)
         }
         if (g < b) {
             upperbound = g
@@ -425,7 +492,157 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
 
 
 }
+// function negascout(newBoard, player, depth,alpha,beta, hash,maxDepth,restrictions){
+//          var alphaOrig=alpha;
+//              if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
+//          CacheHits++;
+//          let score = Cache[hash].score;
+//          if (Cache[hash].Flag === 0) {
+//              CacheCutoffs++;
+//              return score
+//          }
+//          if (Cache[hash].Flag === -1 ) {
+//              alpha=Math.max(alpha,score);
+//          } else if (Cache[hash].Flag === 1 ) {
+//              beta=Math.min(beta,score);
+//          }
+//          if(alpha>=beta){
+//              CacheCutoffs++
+//              return score
+//          }
+//      }
+// fc++
 
+//   if (checkwin(restrictions, newBoard, -1)) {
+//          return -2000000+(maxDepth-depth)
+//      }
+//   if (checkwin(restrictions, newBoard, 1)) {
+//          return -2000000+(maxDepth-depth);
+//      }
+//      if (depth === 0) {
+//         return evaluateState(restrictions, newBoard, player)
+//      }
+//       var  availSpots= BoardGenerator(restrictions, newBoard, player); 
+
+//  if (availSpots.length === 0) {
+//          return 0;
+//      }
+//      var b=beta;
+//      var bestscore=-Infinity;
+//      var i, j, score;
+//      var newHash;
+//      var bestmove;
+//                  for (var y = 0; y < availSpots.length; y++) {
+//              i = availSpots[y].i;
+//              j = availSpots[y].j;
+//              newHash = update_hash(hash, player, i, j)
+//              newBoard[i][j] = player;
+//              var restrictions_temp=Change_restrictions(restrictions,i,j)
+//              score=-negascout(newBoard,-player,depth-1,-b,-alpha,newHash,maxDepth,restrictions_temp)
+//              if(score>alpha && score<beta && y>0){
+//                score=-negascout(newBoard,-player,depth-1,-beta,-score,newHash,maxDepth,restrictions_temp)  
+//              }
+//              if(score>bestscore){
+//                  bestscore=score
+//                  bestmove={i:i,j:j,score:score}
+//              }
+//              newBoard[i][j] = 0;
+//              alpha=Math.max(alpha,score)
+//              if(alpha>=beta){return alpha}
+//              b=alpha+1;
+//      } 
+//          CachePuts++
+//          Cache[hash] = {score: bestscore};
+//          Cache[hash].depth = depth;
+//          if(bestscore<=alphaOrig){
+//            Cache[hash].Flag = 1  
+//          }else if(bestscore>=beta){
+//            Cache[hash].Flag = -1  
+//          }else{
+//              Cache[hash].Flag = 0
+//          }
+//          if(depth===maxDepth){
+//              return bestmove
+//          }else{
+//              return bestscore  
+//          }
+
+// }
+//  function iterative_negamax(Board,depth){
+//   var MaxDepth=0;
+//   var bestmove;
+//     while(MaxDepth!==depth){
+//   MaxDepth+=2 
+//    bestmove=negamax(Board, 1, MaxDepth,-Infinity,Infinity,hash(Board),MaxDepth)
+// //  Set_last_best(bestmove)
+//   if(bestmove.score>1999970){
+//       break;
+//   }
+//    }
+//    return bestmove
+//  }
+//         function iterative_negascout(Board,depth){
+//   var MaxDepth=0;
+//   var bestmove;
+//     while(MaxDepth!==depth){
+//   MaxDepth+=2 
+//    bestmove=negascout(Board, 1, MaxDepth,-Infinity,Infinity,hash(Board),MaxDepth)
+//   if(bestmove.score>1999970){
+//       break;
+//   }
+//    }
+//    return bestmove
+//  }
+
+
+
+//    var t0 = performance.now();
+// var bestmoves =BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1); 
+//  bestmove=minimax(GameBoard,1, 2,-Infinity, Infinity, hash(GameBoard),6)
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+//  console.log("Call to minimax took " + (t1 - t0) / 1000 + " seconds.")
+
+// var t0 = performance.now();
+// var bestmoves =BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1); 
+//  bestmove=negamax(GameBoard,1, 2,-Infinity, Infinity, hash(GameBoard),6)
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+//  console.log("Call to negamax took " + (t1 - t0) / 1000 + " seconds.")
+
+// var t0 = performance.now();
+// var bestmoves =BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1); 
+//  bestmove=iterative_negamax(GameBoard,2)
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+//  console.log("Call to iterative_negamax took " + (t1 - t0) / 1000 + " seconds.")
+
+// var t0 = performance.now();
+// var bestmoves =BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1); 
+//  bestmove=mtdf(GameBoard,0,2)
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+//  console.log("Call to mtdf took " + (t1 - t0) / 1000 + " seconds.")
+
+//   var t0 = performance.now(); 
+//  bestmove=negascout(GameBoard, 1, 6,-Infinity,Infinity,hash(GameBoard),6,Get_restrictions(GameBoard))
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+// console.log("Call to negascout took " + (t1 - t0) / 1000 + " seconds.")
+//  fc=0;
+
+//   var t0 = performance.now();
+// var bestmoves =BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1); 
+//  bestmove=iterative_negascout(GameBoard,2)
+//  Cache={};
+//  var t1 = performance.now();
+//  console.log(bestmove)
+//  console.log("Call to negascout iterative took " + (t1 - t0) / 1000 + " seconds.")
 
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
@@ -434,7 +651,6 @@ var CacheHits = 0;
 var Cutoffs = 0;
 var CacheCutoffs = 0;
 var CachePuts = 0;
-var cch_pts=0;
 function search() {
     var t0 = performance.now();
     let bestmove = iterative_mtdf(GameBoard, MaximumDepth)
@@ -446,8 +662,6 @@ function search() {
         CacheHits:CacheHits,
         CacheCutoffs:CacheCutoffs,
         CachePuts:CachePuts,
-        StateCacheHits:cch_hts,
-        StateCachePuts:cch_pts,
         fc:fc,
         time:(t1 - t0) / 1000
     })

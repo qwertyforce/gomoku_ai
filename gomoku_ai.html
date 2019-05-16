@@ -85,8 +85,10 @@ Engine.onmessage = function(e) {
     console.log(`Cache Hits: ${e.data.CacheHits}`)
     console.log(`Cache Cutoffs: ${e.data.CacheCutoffs}`)
     console.log(`Cache Puts: ${e.data.CachePuts}`)
-    console.log(`Nodes searched: ${e.data.fc}`)
+    console.log(`function calls ${e.data.fc}`)
     console.log(`Call to iterative mtdf took ${e.data.time} seconds.`)
+    console.log(`StateCacheHits: ${e.data.StateCacheHits}`)
+    console.log(`StateCachePuts: ${e.data.StateCachePuts}`)
     }
 //var x=JSON.stringify(GameBoard)
 var Depth=6;
