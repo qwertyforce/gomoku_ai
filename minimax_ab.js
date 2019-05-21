@@ -16,6 +16,11 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
+GameBoard[7][7] = 1;
+GameBoard[8][8] = -1;
+// GameBoard[7][9] = 1;
+// GameBoard[8][9] = -1;
+
 const aiPlayer = 1;
 const huPlayer = -1;
 var fc = 0;
@@ -344,6 +349,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
             bestvalue = value
             if (depth == MaximumDepth) {
                 bestMove = {i: i,j: j,score: value}
+                console.log(bestMove)
             }
         }
         a = Math.max(a, value)
@@ -381,7 +387,7 @@ var cch_pts=0;
 function search(player,depth) {
     MaximumDepth=depth;
     var t0 = performance.now(); 
-    let bestmove =  negamax(GameBoard, player, depth, -Infinity, Infinity, hash(GameBoard), Get_restrictions(GameBoard), 0,0)
+    let bestmove =  negamax(GameBoard, player, depth,-Infinity,Infinity,hash(GameBoard),Get_restrictions(GameBoard), 0,0)
     var t1 = performance.now();
     Cache={}
     StateCache={}
@@ -396,3 +402,17 @@ function search(player,depth) {
         time:(t1 - t0) / 1000
     })
 }
+ function iterative_negamax(Board,depth){
+  var MaxDepth=0;
+  var bestmove;
+    while(MaxDepth!==depth){
+  MaxDepth+=2 
+   bestmove=negamax(Board, 1, MaxDepth,-Infinity,Infinity,hash(Board),Get_restrictions(GameBoard), 0,0)
+//  Set_last_best(bestmove)
+  if(bestmove.score>1999970){
+      break;
+  }
+   }
+   return bestmove
+ }
+search(1,6);

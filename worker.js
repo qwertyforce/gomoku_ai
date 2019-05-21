@@ -60,6 +60,18 @@ function checkwin(Board, x, y) {
         }
     }
 }
+function Get_last_best() {
+    return bestmoves;
+}
+
+function Set_last_best(bestmove) {
+    for (var i = 0; i < bestmoves.length; i++) {
+        if(bestmoves[i].i===bestmove.i && bestmoves[i].j===bestmove.j){
+           bestmoves.splice(i, 1);
+        }
+    }
+    bestmoves.unshift(bestmove)
+}
 
 function remoteCell(Board, r, c) {
     for (var i = r - 2; i <= r + 2; i++) {
@@ -154,7 +166,6 @@ function BoardGenerator(restrictions, Board, player) {
                 move = {}
                 move.i = i;
                 move.j = j;
-                // move.score = evalute_move(Board, i, j, player)
                 move.score = evalute_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
                     //BoardGenerator_Cache[hash]=move
@@ -327,17 +338,19 @@ function iterative_mtdf(Board, maxdepth) {
     var restrictions = Get_restrictions(Board)
     var guess = evaluateState(restrictions, Board, 1);
     console.log(`Guess for best score: ${guess}`)
-    var temp;
-    for (var i = 2; i <= maxdepth; i += 2) {
+    bestmoves=BoardGenerator(restrictions, Board, 1);
+    var move;
+    for (var i = 4; i <= maxdepth; i += 2) {
         MaximumDepth = i;
-        temp = mtdf(Board, guess, i, restrictions)
-        // console.log(temp)
-        if (Math.abs(temp.score)>1999990){
-            return temp
+        move = mtdf(Board, guess, i, restrictions)
+        Set_last_best(move);
+         console.log(move)
+        if (Math.abs(move.score)>1999990){
+            return move
         }
-        guess = temp.score
+        guess = move.score
     }
-    return temp;
+    return move;
 }
 var cch_hts = 0
 
@@ -376,7 +389,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     //   availSpots=BoardGenerator_Cache[hash];
     //   cch_hts++
     // }else{
-    availSpots = BoardGenerator(restrictions, newBoard, player);
+    if(depth===MaximumDepth){
+     availSpots=Get_last_best();
+    }else{
+      availSpots = BoardGenerator(restrictions, newBoard, player);
+    }
+
     // }
     if (availSpots.length === 0) {
         return 0;
@@ -429,6 +447,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
 
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
+var bestmoves=[]; //For move ordering in iterative mtdf  (fisrt move in the list is best move of previous depth)
 Hashtable_init();
 var CacheHits = 0;
 var Cutoffs = 0;
@@ -442,6 +461,7 @@ function search() {
     Cache={}
     StateCache={}
     return({
+        firstMoves: BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1),
         bestmove:bestmove,
         CacheHits:CacheHits,
         CacheCutoffs:CacheCutoffs,
