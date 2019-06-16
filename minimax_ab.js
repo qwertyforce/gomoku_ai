@@ -7,7 +7,7 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
@@ -19,7 +19,35 @@ var GameBoard = [
 GameBoard[7][7] = 1;
 GameBoard[8][8] = -1;
 // GameBoard[7][9] = 1;
+// GameBoard[8][7] = -1;
+// GameBoard[6][8] = 1;
+// GameBoard[5][9] = -1;
+// GameBoard[7][10] = 1;
+// GameBoard[7][8] = -1;
+// GameBoard[6][9] = 1;
+// GameBoard[6][10] = -1;
+// GameBoard[7][11] = 1;
+// GameBoard[9][11] = -1;
+// GameBoard[8][10] = 1;
+// GameBoard[7][12] = -1;
+// GameBoard[8][6] = 1;
+// GameBoard[4][6] = -1;
+// GameBoard[9][8] = 1;
+// GameBoard[9][9] = -1;
+// GameBoard[10][6] = 1;
+// GameBoard[9][6] = -1;
+// GameBoard[7][5] = 1;
+// GameBoard[9][5] = -1;
+// GameBoard[6][4] = 1;
+// GameBoard[5][3] = -1;
+// GameBoard[10][7] = 1;
+// GameBoard[10][5] = -1;
+// GameBoard[11][4] = 1;
 // GameBoard[8][9] = -1;
+// GameBoard[9][4] = 1;
+// GameBoard[9][10] = -1;
+// GameBoard[6][7]=1;
+// GameBoard[10][11]=-1;
 
 const aiPlayer = 1;
 const huPlayer = -1;
@@ -28,6 +56,16 @@ const FiguresToWin = 5;
 const Rows = GameBoard.length;
 const Columns = GameBoard[0].length
 const WIN_DETECTED=false;
+const LiveOne =10;
+const DeadOne = 1;
+const LiveTwo = 100;
+const DeadTwo =10;
+const LiveThree = 1000;
+const DeadThree = 100;
+const LiveFour = 10000;
+const DeadFour = 1000;
+const Five = 100000;
+
 function check_directions(arr) {
     for (var i = 0; i < arr.length - 4; i++) {
         if (arr[i] !== 0) {
@@ -170,45 +208,77 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
+     return availSpots_score.slice(0,20)
     return availSpots_score;
 }
-var Scores = [19, 15, 11, 7, 3]
 function evaluate_direction(direction_arr, player) {
     let score = 0;
-    let empty;
-    let stones;
     for (var i = 0;(i + 4) < direction_arr.length; i++) {
-        empty = 0;
-        stones = 0;
+         let you = 0;
+         let enemy = 0;
         for (var j = 0; j <= 4; j++) {
-            if (direction_arr[i + j] === 0) {
-                empty++;
-            } else if (direction_arr[i + j] === player) {
-                stones++
-            } else {
-                break;
+            if (direction_arr[i + j] === player) {
+                you++
+            } else if(direction_arr[i + j] === -player){
+                enemy++
             }
         }
-        if (stones === 5) {
-            return WIN_DETECTED
-        }
-        if (empty === 5) {
-            continue
-        }
-
-        if ((stones + empty) === 5) {
-            score += Scores[empty]
+      //  console.log(you,enemy)
+        score+=evalff(get_seq(you,enemy));
+        if ((score>=800000)){
+           return WIN_DETECTED;
         }
     }
-    return score;
+    return score
+}
+
+
+function evalff(seq){
+    switch(seq){
+        case 0:
+        return 7;
+        case 1:
+        return 35;
+        case 2:
+        return 800;
+        case 3:
+        return 15000;
+        case 4:
+        return 800000;
+        case -1:
+        return 15;
+        case -2:
+        return 400;
+        case -3:
+        return 1800;
+        case -4:
+        return 100000;
+        case 17:
+        return 0;
+    }
+}
+
+function get_seq(y,e) {
+     if(y+e===0){
+       return 0; 
+     }
+     if(y!==0&&e===0){
+        return y
+     }
+     if(y===0&&e!==0){
+        return -e
+     }
+     if(y!==0&&e!==0){
+        return 17
+     }
 }
 
 function evalute_move(Board, x, y, player) {
     let score = 0;
-    let prev_value = Board[x][y]
-    Board[x][y] = player;
+  //  let prev_value = Board[x][y]
+  //  Board[x][y] = player;
     let Directions = get_directions(Board,x,y);
-    Board[x][y] = prev_value;
+ //   Board[x][y] = prev_value;
     let temp_score;
     for (var i = 0; i < 4; i++) {
         temp_score = evaluate_direction(Directions[i], player);
@@ -222,27 +292,20 @@ function evalute_move(Board, x, y, player) {
 }
 var StateCache = {};
 
-function evaluateState(restrictions, Board, player, hash) {
-    let min_r = restrictions[0];
-    let min_c = restrictions[1];
-    let max_r = restrictions[2];
-    let max_c = restrictions[3];
-    let score = 0;
-    for (var i = min_r - 2; i <= max_r + 2; i++) {
-        for (var j = min_c - 2; j <= max_c + 2; j++) {
-            let Board_value=Board[i][j]
-            if (Board_value === -player) {
-                score -= evalute_move(Board, i, j, -player);
-            } else if (Board_value === player) {
-                score += evalute_move(Board, i, j, player);
-            }
-        }
+function evaluate_state(Board, player,hash,restrictions) {
+    var black_score = eval_board(Board, -1,restrictions);
+    var white_score = eval_board(Board, 1,restrictions);
+    var score=0;
+    if (player = -1) {
+        score = -(black_score - white_score);
+    } else {
+        score = -(white_score - black_score);
     }
     StateCache[hash] = score;
     cch_pts++;
     return score;
-
 }
+
 var Table = []
 var Cache = {};
 
@@ -323,7 +386,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
             cch_hts++
             return StateCache[hash]
         }
-        return evaluateState(restrictions, newBoard, player, hash)
+        return evaluate_state(newBoard,player,hash,restrictions)
     }
     var availSpots;
     availSpots = BoardGenerator(restrictions, newBoard, player);
@@ -415,4 +478,163 @@ function search(player,depth) {
    }
    return bestmove
  }
-search(1,6);
+search(1,4);
+// var x=evaluate_state(GameBoard,1,hash(GameBoard))
+// console.log(x)
+  //  var t0 = performance.now(); 
+  //   let evall =  evaluate_state(GameBoard, 1, hash(GameBoard))
+  // //let evall =  BoardGenerator((Get_restrictions(GameBoard)), GameBoard, 1);
+  //   var t1 = performance.now();
+  //   console.log((t1 - t0))
+  //   console.log(evall)
+
+function eval_board(Board,pieceType,restrictions) {
+    var score=0;
+    let min_r = restrictions[0];
+    let min_c = restrictions[1];
+    let max_r = restrictions[2];
+    let max_c = restrictions[3];
+    for (var row = min_r; row < max_r+1; row++) {
+        for (var column = min_c; column < max_c+1; column++) {
+            if (Board[row][column] == pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (column === 0 || Board[row][column - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                for (column++; column < Columns && Board[row][column] === pieceType; column++) {
+                    piece++;
+                }
+                // right
+                if (column === Columns || Board[row][column] !== 0) {
+                    block++;
+                }  
+                score += evaluateblock(block,piece);
+            }
+        }
+    }
+
+      for (var column = min_c; column < max_c+1; column++) {       
+        for (var row = min_r; row < max_r+1; row++) {
+            if (Board[row][column] == pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (row === 0 || Board[row - 1][column] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                for (row++; row < Rows && Board[row][column] === pieceType; row++) {
+                    piece++;
+                }
+                // right
+                if (row === Rows || Board[row][column] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+            }
+        }
+    }
+
+ for (var n = 0; n < Columns + Rows - 1; n += 1){
+  var r = n;
+  var c = 0;
+  while (r >= min_r && c <= max_c){
+    if (r <= max_r){
+       if (Board[r][c] === pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (c===0 || r===Rows-1 ||Board[r + 1][c - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                r--;c++;
+                for (;r >=0 && Board[r][c] === pieceType;r--) {
+                    piece++;
+                    c++
+                }
+                // right
+                if (r < 0 || c===Columns || Board[r][c] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+              }
+    }
+    r -= 1;
+    c += 1;
+  }
+}
+    
+     for (var n = Rows-1; n >= -Columns+1; n--){
+  var r = n;
+  var c = 0;
+  var str = '';
+  while (r <= max_r && c <= max_c)
+  {
+    if (r >= min_r&&r<=max_r){
+   if (Board[r][c] === pieceType) {
+  var block = 0;
+                var piece = 1;
+                // left
+                if (c===0 || r === 0 || Board[r-1][c - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                r++;c++;
+                for (;r<Rows && Board[r][c] == pieceType; r++) {
+                    piece++;
+                    c++;
+                }
+                // right
+                if (r ===Rows || c===Columns || Board[r][c] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+   }
+    }
+    r += 1;
+    c += 1;
+  }
+ 
+}
+return score;
+}
+
+function evaluateblock(blocks,pieces) {
+   if(blocks===0){
+switch (pieces) {
+            case  1 :
+                return LiveOne;
+            case  2 :
+                return LiveTwo;
+            case  3 :
+                return LiveThree;
+            case  4 :
+                return LiveFour;
+            default :
+                return Five;
+        }
+   }else if(blocks===1){
+ switch (pieces) {
+            case  1 :
+                return DeadOne;
+            case  2 :
+                return DeadTwo;
+            case  3 :
+                return DeadThree;
+            case  4 :
+                return DeadFour;
+            default :
+                return Five;
+        }
+   }else{
+    if(pieces>=5){
+        return Five;
+    }else{
+        return 0
+    }
+   }
+}
