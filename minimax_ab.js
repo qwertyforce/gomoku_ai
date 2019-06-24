@@ -66,6 +66,157 @@ const LiveFour = 10000;
 const DeadFour = 1000;
 const Five = 100000;
 
+function eval_board(Board,pieceType,restrictions) {
+    var score=0;
+    let min_r = restrictions[0];
+    let min_c = restrictions[1];
+    let max_r = restrictions[2];
+    let max_c = restrictions[3];
+    for (var row = min_r; row < max_r+1; row++) {
+        for (var column = min_c; column < max_c+1; column++) {
+            if (Board[row][column] == pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (column === 0 || Board[row][column - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                for (column++; column < Columns && Board[row][column] === pieceType; column++) {
+                    piece++;
+                }
+                // right
+                if (column === Columns || Board[row][column] !== 0) {
+                    block++;
+                }  
+                score += evaluateblock(block,piece);
+            }
+        }
+    }
+
+      for (var column = min_c; column < max_c+1; column++) {       
+        for (var row = min_r; row < max_r+1; row++) {
+            if (Board[row][column] == pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (row === 0 || Board[row - 1][column] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                for (row++; row < Rows && Board[row][column] === pieceType; row++) {
+                    piece++;
+                }
+                // right
+                if (row === Rows || Board[row][column] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+            }
+        }
+    }
+
+ for (var n = 0; n < Columns + Rows - 1; n += 1){
+  var r = n;
+  var c = 0;
+  while (r >= min_r && c <= max_c){
+    if (r <= max_r){
+       if (Board[r][c] === pieceType) {
+                var block = 0;
+                var piece = 1;
+                // left
+                if (c===0 || r===Rows-1 ||Board[r + 1][c - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                r--;c++;
+                for (;r >=0 && Board[r][c] === pieceType;r--) {
+                    piece++;
+                    c++
+                }
+                // right
+                if (r < 0 || c===Columns || Board[r][c] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+              }
+    }
+    r -= 1;
+    c += 1;
+  }
+}
+    
+     for (var n = Rows-1; n >= -Columns+1; n--){
+  var r = n;
+  var c = 0;
+  var str = '';
+  while (r <= max_r && c <= max_c)
+  {
+    if (r >= min_r&&r<=max_r){
+   if (Board[r][c] === pieceType) {
+  var block = 0;
+                var piece = 1;
+                // left
+                if (c===0 || r === 0 || Board[r-1][c - 1] !== 0) {
+                    block++;
+                }
+                // pieceNum
+                r++;c++;
+                for (;r<Rows && Board[r][c] == pieceType; r++) {
+                    piece++;
+                    c++;
+                }
+                // right
+                if (r ===Rows || c===Columns || Board[r][c] !== 0) {
+                    block++;
+                }
+                score += evaluateblock(block,piece);
+   }
+    }
+    r += 1;
+    c += 1;
+  }
+ 
+}
+return score;
+}
+
+function evaluateblock(blocks,pieces) {
+   if(blocks===0){
+switch (pieces) {
+            case  1 :
+                return LiveOne;
+            case  2 :
+                return LiveTwo;
+            case  3 :
+                return LiveThree;
+            case  4 :
+                return LiveFour;
+            default :
+                return Five;
+        }
+   }else if(blocks===1){
+ switch (pieces) {
+            case  1 :
+                return DeadOne;
+            case  2 :
+                return DeadTwo;
+            case  3 :
+                return DeadThree;
+            case  4 :
+                return DeadFour;
+            default :
+                return Five;
+        }
+   }else{
+    if(pieces>=5){
+        return Five;
+    }else{
+        return 0
+    }
+   }
+}
+
 function check_directions(arr) {
     for (var i = 0; i < arr.length - 4; i++) {
         if (arr[i] !== 0) {
@@ -208,7 +359,7 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-     return availSpots_score.slice(0,20)
+   //  return availSpots_score.slice(0,20)
     return availSpots_score;
 }
 function evaluate_direction(direction_arr, player) {
@@ -431,7 +582,6 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         Cache[hash].Flag = 0
     }
     if (depth == MaximumDepth) {
-        console.log(1)
         return bestMove
     } else {
         return bestvalue
@@ -478,7 +628,7 @@ function search(player,depth) {
    }
    return bestmove
  }
-search(1,4);
+search(1,8);
 // var x=evaluate_state(GameBoard,1,hash(GameBoard))
 // console.log(x)
   //  var t0 = performance.now(); 
@@ -488,153 +638,3 @@ search(1,4);
   //   console.log((t1 - t0))
   //   console.log(evall)
 
-function eval_board(Board,pieceType,restrictions) {
-    var score=0;
-    let min_r = restrictions[0];
-    let min_c = restrictions[1];
-    let max_r = restrictions[2];
-    let max_c = restrictions[3];
-    for (var row = min_r; row < max_r+1; row++) {
-        for (var column = min_c; column < max_c+1; column++) {
-            if (Board[row][column] == pieceType) {
-                var block = 0;
-                var piece = 1;
-                // left
-                if (column === 0 || Board[row][column - 1] !== 0) {
-                    block++;
-                }
-                // pieceNum
-                for (column++; column < Columns && Board[row][column] === pieceType; column++) {
-                    piece++;
-                }
-                // right
-                if (column === Columns || Board[row][column] !== 0) {
-                    block++;
-                }  
-                score += evaluateblock(block,piece);
-            }
-        }
-    }
-
-      for (var column = min_c; column < max_c+1; column++) {       
-        for (var row = min_r; row < max_r+1; row++) {
-            if (Board[row][column] == pieceType) {
-                var block = 0;
-                var piece = 1;
-                // left
-                if (row === 0 || Board[row - 1][column] !== 0) {
-                    block++;
-                }
-                // pieceNum
-                for (row++; row < Rows && Board[row][column] === pieceType; row++) {
-                    piece++;
-                }
-                // right
-                if (row === Rows || Board[row][column] !== 0) {
-                    block++;
-                }
-                score += evaluateblock(block,piece);
-            }
-        }
-    }
-
- for (var n = 0; n < Columns + Rows - 1; n += 1){
-  var r = n;
-  var c = 0;
-  while (r >= min_r && c <= max_c){
-    if (r <= max_r){
-       if (Board[r][c] === pieceType) {
-                var block = 0;
-                var piece = 1;
-                // left
-                if (c===0 || r===Rows-1 ||Board[r + 1][c - 1] !== 0) {
-                    block++;
-                }
-                // pieceNum
-                r--;c++;
-                for (;r >=0 && Board[r][c] === pieceType;r--) {
-                    piece++;
-                    c++
-                }
-                // right
-                if (r < 0 || c===Columns || Board[r][c] !== 0) {
-                    block++;
-                }
-                score += evaluateblock(block,piece);
-              }
-    }
-    r -= 1;
-    c += 1;
-  }
-}
-    
-     for (var n = Rows-1; n >= -Columns+1; n--){
-  var r = n;
-  var c = 0;
-  var str = '';
-  while (r <= max_r && c <= max_c)
-  {
-    if (r >= min_r&&r<=max_r){
-   if (Board[r][c] === pieceType) {
-  var block = 0;
-                var piece = 1;
-                // left
-                if (c===0 || r === 0 || Board[r-1][c - 1] !== 0) {
-                    block++;
-                }
-                // pieceNum
-                r++;c++;
-                for (;r<Rows && Board[r][c] == pieceType; r++) {
-                    piece++;
-                    c++;
-                }
-                // right
-                if (r ===Rows || c===Columns || Board[r][c] !== 0) {
-                    block++;
-                }
-                score += evaluateblock(block,piece);
-   }
-    }
-    r += 1;
-    c += 1;
-  }
- 
-}
-return score;
-}
-
-function evaluateblock(blocks,pieces) {
-   if(blocks===0){
-switch (pieces) {
-            case  1 :
-                return LiveOne;
-            case  2 :
-                return LiveTwo;
-            case  3 :
-                return LiveThree;
-            case  4 :
-                return LiveFour;
-            default :
-                return Five;
-        }
-   }else if(blocks===1){
- switch (pieces) {
-            case  1 :
-                return DeadOne;
-            case  2 :
-                return DeadTwo;
-            case  3 :
-                return DeadThree;
-            case  4 :
-                return DeadFour;
-            default :
-                return Five;
-        }
-   }else{
-    if(pieces>=5){
-        return Five;
-    }else{
-        return 0
-    }
-   }
-}
