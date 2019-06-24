@@ -126,9 +126,9 @@ function eval_board(Board,pieceType,restrictions) {
         }
     }
 
- for (var n = 0; n < Columns + Rows - 1; n += 1){
+ for (var n = min_r; n <max_c+max_r - 1; n += 1){
   var r = n;
-  var c = 0;
+  var c = min_c;
   while (r >= min_r && c <= max_c){
     if (r <= max_r){
        if (Board[r][c] === pieceType) {
@@ -611,6 +611,6 @@ function search(player,depth) {
         time:(t1 - t0) / 1000
     })
 }
-search(1,8);
+search(1,4);
 
 
