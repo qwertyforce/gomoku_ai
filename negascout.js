@@ -126,7 +126,7 @@ function eval_board(Board,pieceType,restrictions) {
         }
     }
 
- for (var n = min_r; n <max_c+max_r - 1; n += 1){
+ for (var n = min_r; n <(max_c-min_c+max_r ); n += 1){
   var r = n;
   var c = min_c;
   while (r >= min_r && c <= max_c){
@@ -156,7 +156,7 @@ function eval_board(Board,pieceType,restrictions) {
   }
 }
     
-     for (var n = Rows-1; n >= -Columns+1; n--){
+     for (var n = min_r-(max_c-min_c); n<=max_r; n++){
   var r = n;
   var c = 0;
   var str = '';
@@ -565,7 +565,7 @@ fc++
              }
              newBoard[i][j] = 0;
              alpha=Math.max(alpha,score)
-             if(alpha>=beta){return alpha}
+             if(alpha>=beta){break;}
              b=alpha+1;
      } 
          CachePuts++
@@ -585,6 +585,21 @@ fc++
          }
 }
 
+ function iterative_negascout(player,Board,depth){
+  var bestmove;
+  var i=2;
+    while(i!==depth+2){
+  MaximumDepth=i; 
+   bestmove=negascout(Board, player, MaximumDepth,-Infinity,Infinity,hash(Board),Get_restrictions(Board), 0,0)
+//  Set_last_best(bestmove)
+  if(bestmove.score>1999900){
+      break;
+  }
+  i+=2;
+   }
+   return bestmove
+ }
+
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
 Hashtable_init();
 var CacheHits = 0;
@@ -596,6 +611,7 @@ var cch_pts=0;
 function search(player,depth) {
     MaximumDepth=depth;
     var t0 = performance.now(); 
+    //   let bestmove = iterative_negascout(player,GameBoard,depth)
     let bestmove =  negascout(GameBoard, player, depth,-Infinity,Infinity,hash(GameBoard),Get_restrictions(GameBoard), 0,0)
     var t1 = performance.now();
     Cache={}

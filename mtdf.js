@@ -18,24 +18,24 @@ var GameBoard = [
 ]
 GameBoard[7][7] = 1;
 GameBoard[8][8] = -1;
-// GameBoard[7][9] = 1;
-// GameBoard[8][7] = -1;
-// GameBoard[6][8] = 1;
-// GameBoard[5][9] = -1;
-// GameBoard[7][10] = 1;
-// GameBoard[7][8] = -1;
-// GameBoard[6][9] = 1;
-// GameBoard[6][10] = -1;
-// GameBoard[7][11] = 1;
-// GameBoard[9][11] = -1;
-// GameBoard[8][10] = 1;
-// GameBoard[7][12] = -1;
-// GameBoard[8][6] = 1;
-// GameBoard[4][6] = -1;
-// GameBoard[9][8] = 1;
-// GameBoard[9][9] = -1;
-// GameBoard[10][6] = 1;
-// GameBoard[9][6] = -1;
+GameBoard[7][9] = 1;
+GameBoard[8][7] = -1;
+GameBoard[6][8] = 1;
+GameBoard[5][9] = -1;
+GameBoard[7][10] = 1;
+GameBoard[7][8] = -1;
+GameBoard[6][9] = 1;
+GameBoard[6][10] = -1;
+GameBoard[7][11] = 1;
+GameBoard[9][11] = -1;
+GameBoard[8][10] = 1;
+GameBoard[7][12] = -1;
+GameBoard[8][6] = 1;
+GameBoard[4][6] = -1;
+GameBoard[9][8] = 1;
+GameBoard[9][9] = -1;
+GameBoard[10][6] = 1;
+GameBoard[9][6] = -1;
 // GameBoard[7][5] = 1;
 // GameBoard[9][5] = -1;
 // GameBoard[6][4] = 1;
@@ -587,21 +587,33 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         return bestvalue
     }
 }
- function iterative_negamax(player,Board,depth){
-  var bestmove;
-  var i=2;
-    while(i!==depth+2){
-  MaximumDepth=i; 
-   bestmove=negamax(Board, player, MaximumDepth,-Infinity,Infinity,hash(Board),Get_restrictions(Board), 0,0)
-//  Set_last_best(bestmove)
-  if(bestmove.score>1999900){
-      break;
-  }
-  i+=2;
-   }
-   return bestmove
- }
- 
+
+function mtdf(Board, f, d, restrictions) {
+    var g = f;
+    var upperbound = Infinity;
+    var lowerbound = -Infinity;
+    var b;
+    var result
+    var last_succesful;
+    do {
+        if (g === lowerbound) {
+            b = g + 1
+        } else {
+            b = g;
+        }
+        result = negamax(Board, 1, d, b - 1, b, hash(Board), restrictions, 0, 0)
+        if (result !== undefined) {
+            g = result.score
+            last_succesful = result
+        }
+        if (g < b) {
+            upperbound = g
+        } else {
+            lowerbound = g
+        }
+    } while (lowerbound < upperbound)
+    return last_succesful;
+}
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
 Hashtable_init();
@@ -614,7 +626,10 @@ var cch_pts=0;
 function search(player,depth) {
     MaximumDepth=depth;
     var t0 = performance.now(); 
-    let bestmove =  negamax(GameBoard, player, depth,-Infinity,Infinity,hash(GameBoard),Get_restrictions(GameBoard), 0,0)
+    var restrictions = Get_restrictions(GameBoard)
+    var guess = evaluate_state(GameBoard,1,hash(GameBoard),[0,0,Rows-1,Columns-1])
+    console.log(`Guess for best score ${guess}`)
+    let bestmove =  mtdf(GameBoard,guess,depth,restrictions)
     var t1 = performance.now();
     Cache={}
     StateCache={}
@@ -629,7 +644,19 @@ function search(player,depth) {
         time:(t1 - t0) / 1000
     })
 }
-
+ function iterative_negamax(Board,depth){
+  var MaxDepth=0;
+  var bestmove;
+    while(MaxDepth!==depth){
+  MaxDepth+=2 
+   bestmove=negamax(Board, 1, MaxDepth,-Infinity,Infinity,hash(Board),Get_restrictions(GameBoard), 0,0)
+//  Set_last_best(bestmove)
+  if(bestmove.score>1999970){
+      break;
+  }
+   }
+   return bestmove
+ }
 search(1,8);
 // var x=evaluate_state(GameBoard,1,hash(GameBoard))
 // console.log(x)
