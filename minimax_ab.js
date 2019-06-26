@@ -614,6 +614,7 @@ var cch_pts=0;
 function search(player,depth) {
     MaximumDepth=depth;
     var t0 = performance.now(); 
+   // let bestmove = iterative_negamax(player,GameBoard,depth)
     let bestmove =  negamax(GameBoard, player, depth,-Infinity,Infinity,hash(GameBoard),Get_restrictions(GameBoard), 0,0)
     var t1 = performance.now();
     Cache={}
