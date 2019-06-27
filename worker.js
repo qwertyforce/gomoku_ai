@@ -34,11 +34,14 @@ const DeadFour = 1000;
 const Five = 100000;
 
 
-
-function eval_board(Board,pieceType) {
+function eval_board(Board,pieceType,restrictions) {
     var score=0;
-    for (var row = 0; row < Rows; row++) {
-        for (var column = 0; column < Columns; column++) {
+    let min_r = restrictions[0];
+    let min_c = restrictions[1];
+    let max_r = restrictions[2];
+    let max_c = restrictions[3];
+    for (var row = min_r; row < max_r+1; row++) {
+        for (var column = min_c; column < max_c+1; column++) {
             if (Board[row][column] == pieceType) {
                 var block = 0;
                 var piece = 1;
@@ -59,8 +62,8 @@ function eval_board(Board,pieceType) {
         }
     }
 
-      for (var column = 0; column < Columns; column++) {       
-        for (var row = 0; row < Rows; row++) {
+      for (var column = min_c; column < max_c+1; column++) {       
+        for (var row = min_r; row < max_r+1; row++) {
             if (Board[row][column] == pieceType) {
                 var block = 0;
                 var piece = 1;
@@ -81,11 +84,11 @@ function eval_board(Board,pieceType) {
         }
     }
 
- for (var n = 0; n < Columns + Rows - 1; n += 1){
+ for (var n = min_r; n <(max_c-min_c+max_r ); n += 1){
   var r = n;
-  var c = 0;
-  while (r >= 0 && c < Columns){
-    if (r < Rows){
+  var c = min_c;
+  while (r >= min_r && c <= max_c){
+    if (r <= max_r){
        if (Board[r][c] === pieceType) {
                 var block = 0;
                 var piece = 1;
@@ -111,13 +114,13 @@ function eval_board(Board,pieceType) {
   }
 }
     
-     for (var n = Rows-1; n >= -Columns+1; n--){
+     for (var n = min_r-(max_c-min_c); n<=max_r; n++){
   var r = n;
-  var c = 0;
+  var c = min_c;
   var str = '';
-  while (r < Rows && c < Columns)
+  while (r <= max_r && c <= max_c)
   {
-    if (r >= 0&&r<Rows){
+    if (r >= min_r&&r<=max_r){
    if (Board[r][c] === pieceType) {
   var block = 0;
                 var piece = 1;
@@ -335,7 +338,7 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-    // return availSpots_score.slice(0,10)
+     return availSpots_score.slice(0,20)
     return availSpots_score;
 }
 function evalute_move(Board, x, y, player) {
@@ -418,9 +421,9 @@ function evaluate_direction(direction_arr, player) {
 
 var StateCache = {};
 
-function evaluate_state(Board, player,hash) {
-    var black_score = eval_board(Board, -1);
-    var white_score = eval_board(Board, 1);
+function evaluate_state(Board, player,hash,restrictions) {
+    var black_score = eval_board(Board, -1,restrictions);
+    var white_score = eval_board(Board, 1,restrictions);
     var score=0;
     if (player = -1) {
         score = -(black_score - white_score);
@@ -517,7 +520,7 @@ function mtdf(Board, f, d, restrictions) {
 }
 var startTime = Date.now();
 function TIMEOUT(){
-    if( (Date.now() - startTime)>=60000){
+    if( (Date.now() - startTime)>=MaximumTimeForMove){
         return true;
     }else{
         return false;
@@ -525,12 +528,12 @@ function TIMEOUT(){
 }
 function iterative_mtdf(Board, maxdepth) {
     var restrictions = Get_restrictions(Board)
-    var guess = evaluate_state(Board,1,hash(GameBoard))
+    var guess = evaluate_state(Board,1,hash(GameBoard),[0,0,Rows-1,Columns-1])
     console.log(`Guess for best score: ${guess}`)
     bestmoves=BoardGenerator(restrictions, Board, 1);
     var move;
     var temp;
-    var depth=4;
+    var depth=2;
     while(!TIMEOUT()){
      MaximumDepth = depth;
           temp = mtdf(Board, guess, depth, restrictions);
@@ -582,7 +585,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
             cch_hts++
             return StateCache[hash]
         }
-        return evaluate_state(newBoard,player,hash)
+        return evaluate_state(newBoard,player,hash,restrictions)
     }
     var availSpots;
     // if(BoardGenerator_Cache[hash]!==undefined){
@@ -648,6 +651,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
 var bestmoves=[]; //For move ordering in iterative mtdf  (fisrt move in the list is best move of previous depth)
+var MaximumTimeForMove;
 Hashtable_init();
 var CacheHits = 0;
 var Cutoffs = 0;
@@ -678,6 +682,7 @@ onmessage = function(e) {
     var y=e.data[2]
     var Turn=e.data[3]
     var Depth=e.data[4]
+    MaximumTimeForMove=e.data[5]
     MaximumDepth=Depth
     console.log(e.data)
   if(Board){
