@@ -24,87 +24,74 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
 GameBoard[7][7] = 1;
-GameBoard[8][8] = -1;
-// GameBoard[8][7] = 1;
-// GameBoard[6][7] = -1;
-// GameBoard[7][6] = 1;
+GameBoard[6][8] = -1;
+// GameBoard[7][8] = 1;
 // GameBoard[9][7] = -1;
 // GameBoard[7][9] = 1;
-// GameBoard[7][8] = -1;
-// GameBoard[9][8] = 1;
-// GameBoard[10][9] = -1;
-// GameBoard[5][6] = 1;
-// GameBoard[6][5] = -1;
+// GameBoard[7][10] = -1;
 // GameBoard[6][6] = 1;
-// GameBoard[4][6] = -1;
-// GameBoard[8][9] = 1;
-// GameBoard[8][6] = -1;
-// GameBoard[7][5] = 1;
-// GameBoard[8][4] = -1;
-// GameBoard[6][9] = 1;
-// GameBoard[5][9] = -1;
-// GameBoard[7][10] = 1;
-// GameBoard[6][11] = -1;
-// GameBoard[4][8] = 1;
-// GameBoard[8][11] = -1;
-// GameBoard[5][7] = 1;
-// GameBoard[3][9] = -1;
+// GameBoard[7][5] = -1;
 // GameBoard[5][5] = 1;
-// GameBoard[5][4] = -1;
+// GameBoard[8][8] = -1;
 // GameBoard[4][4] = 1;
 // GameBoard[3][3] = -1;
-// GameBoard[8][10]=1;
-// GameBoard[9][11]=-1;
-// GameBoard[7][11]=1;    
-// GameBoard[7][12]=-1;
-// GameBoard[9][10]=1;   
-// GameBoard[10][10]=-1;
-// GameBoard[5][10]=1;  
-// GameBoard[6][10]=-1;
-// GameBoard[10][11]=1;
-// GameBoard[11][9]=-1;
-// GameBoard[12][8]=1;
-// GameBoard[7][3]=-1;
-// GameBoard[10][8]=1;
-// GameBoard[9][9]=-1;
-// GameBoard[12][9]=1;
-// GameBoard[13][8]=-1;
-// GameBoard[11][12]=1;
-// GameBoard[12][13]=-1;
-// GameBoard[12][11]=1;         //???
-// GameBoard[12][12]=-1;
-// GameBoard[11][11]=1;
-// GameBoard[10][7]=-1;
-// GameBoard[13][10]=1;
-// GameBoard[10][13]=-1;
-// GameBoard[11][13]=1;
+// GameBoard[5][4] = 1;
+// GameBoard[6][4] = -1;
+// GameBoard[5][3] = 1;
+// GameBoard[5][6] = -1;
+// GameBoard[3][5] = 1;
+// GameBoard[6][2] = -1;
+// GameBoard[4][5] = 1;
+// GameBoard[2][5] = -1;
+// GameBoard[4][6] = 1;
+// GameBoard[4][7] = -1;
+// GameBoard[2][4] = 1;
+// GameBoard[1][3] = -1;
+// GameBoard[4][3] = 1;
+// GameBoard[4][2] = -1;
+// GameBoard[5][2] = 1;
+// GameBoard[5][1] = -1;
+// GameBoard[6][5] = 1;
+// GameBoard[7][6] = -1;
+// GameBoard[3][6]=1;
 // GameBoard[6][3]=-1;
-// GameBoard[12][10]=1;
-// GameBoard[12][7]=-1;
-// GameBoard[13][11]=1;
-// GameBoard[14][11]=-1;
-// GameBoard[11][10]=1;
-// GameBoard[11][14]=-1;
-// GameBoard[13][7]=1;
-// GameBoard[9][3]=-1;
-// GameBoard[8][13]=1;
-// GameBoard[9][12]=-1;
-// GameBoard[5][3]=1;
-// GameBoard[8][12]=-1;
-// GameBoard[7][13]=1;
-// GameBoard[6][12]=-1;
-// GameBoard[12][4]=1;
-// GameBoard[11][6]=-1;
-// GameBoard[11][3]=1;
-// GameBoard[4][11]=-1;
-// GameBoard[3][12]=1;
-// GameBoard[8][3]=-1;
-// GameBoard[7][2]=1;
-// GameBoard[12][7]=-1;
+// GameBoard[7][3] = 1;
+// GameBoard[3][4] = -1;
+// GameBoard[2][6] = 1;
+// GameBoard[1][7] = -1;
+
+// GameBoard[10][12] = 1;
+// GameBoard[10][11] = -1;
+// GameBoard[9][12] = 1;
+// GameBoard[8][12] = -1;
+// GameBoard[11][7] = 1;
+// GameBoard[10][8] = -1;
+// GameBoard[9][8] = 1;
+// GameBoard[10][7] = -1;
+
+// GameBoard[8][10] = 1;
+// GameBoard[7][12] = -1;
+// GameBoard[8][6] = 1;
+// GameBoard[4][6] = -1;
+// GameBoard[9][8] = 1;
+// GameBoard[9][9] = -1;
+// GameBoard[10][6] = 1;
+// GameBoard[9][6] = -1;
+// GameBoard[7][5] = 1;
+// GameBoard[9][5] = -1;
+// GameBoard[6][4] = 1;
+// GameBoard[5][3] = -1;
+// GameBoard[10][7] = 1;
+// GameBoard[10][5] = -1;
+// GameBoard[11][4] = 1;
+// GameBoard[8][9] = -1;
+// GameBoard[9][4] = 1;
+// GameBoard[9][10] = -1;
+// GameBoard[6][7]=1;
+// GameBoard[10][11]=-1;
+
 
  
-
-var x,y;
 Engine.onmessage = function(e) {
     console.log(e.data.bestmove);
     console.log(`Cache Hits: ${e.data.CacheHits}`)
@@ -117,8 +104,8 @@ Engine.onmessage = function(e) {
     console.log(e.data.firstMoves)
     }
 //var x=JSON.stringify(GameBoard)
-var Depth=8;
-Engine.postMessage([GameBoard,x,y,1,Depth]);
+var MaximumTimeForMove=60000;
+Engine.postMessage([GameBoard,1,MaximumTimeForMove]);
 </script>              
 </head>
 </html>

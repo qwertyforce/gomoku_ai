@@ -1,27 +1,10 @@
-var GameBoard = [
-    //0 1  2  3  4  5  6  7  8  9  0  1  2  3  4      
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //0
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //2
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //3
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //11
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //12
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
-]
+var GameBoard;
 const aiPlayer = 1;
 const huPlayer = -1;
 var fc = 0;
 const FiguresToWin = 5;
-const Rows = GameBoard.length;
-const Columns = GameBoard[0].length
+var Rows = 21;
+var Columns = 21;
 const WIN_DETECTED=false;
 const LiveOne =10;
 const DeadOne = 1;
@@ -197,15 +180,15 @@ function check_directions(arr) {
 function get_directions(Board,x,y){
      let Directions = [[],[],[],[]];
     for (var i = -4; i < 5; i++) {
-        if (x + i >= 0 && x + i <= 14) {
+        if (x + i >= 0 && x + i <= Rows-1) {
             Directions[0].push(Board[x + i][y])
-           if (y + i >= 0 && y + i <= 14 ) {
+           if (y + i >= 0 && y + i <= Columns-1 ) {
             Directions[2].push(Board[x + i][y + i])
         }
         }
-        if (y + i >= 0 && y + i <= 14) {
+        if (y + i >= 0 && y + i <= Columns-1) {
             Directions[1].push(Board[x][y + i])
-              if (x - i >= 0 && x - i <= 14) {
+              if (x - i >= 0 && x - i <= Rows-1) {
             Directions[3].push(Board[x - i][y + i])
         }
         }
@@ -338,8 +321,8 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-     return availSpots_score.slice(0,20)
-    return availSpots_score;
+     return availSpots_score.slice(0,10)
+// return availSpots_score;
 }
 function evalute_move(Board, x, y, player) {
     let score = 0;
@@ -518,7 +501,7 @@ function mtdf(Board, f, d, restrictions) {
     } while (lowerbound < upperbound)
     return last_succesful;
 }
-var startTime = Date.now();
+
 function TIMEOUT(){
     if( (Date.now() - startTime)>=MaximumTimeForMove){
         return true;
@@ -526,7 +509,7 @@ function TIMEOUT(){
         return false;
     }
 }
-function iterative_mtdf(Board, maxdepth) {
+function iterative_mtdf(Board) {
     var restrictions = Get_restrictions(Board)
     var guess = evaluate_state(Board,1,hash(GameBoard),[0,0,Rows-1,Columns-1])
     console.log(`Guess for best score: ${guess}`)
@@ -658,9 +641,11 @@ var Cutoffs = 0;
 var CacheCutoffs = 0;
 var CachePuts = 0;
 var cch_pts=0;
+var startTime;
 function search() {
+     startTime= Date.now();
     var t0 = performance.now();
-    let bestmove = iterative_mtdf(GameBoard, MaximumDepth)
+    let bestmove = iterative_mtdf(GameBoard)
     var t1 = performance.now();
     Cache={}
     StateCache={}
@@ -678,25 +663,20 @@ function search() {
 }
 onmessage = function(e) { 
     var Board=e.data[0]
-    var x=e.data[1]
-    var y=e.data[2]
-    var Turn=e.data[3]
-    var Depth=e.data[4]
-    MaximumTimeForMove=e.data[5]
-    MaximumDepth=Depth
+    var Turn=e.data[1]
+    MaximumTimeForMove=e.data[2]
     console.log(e.data)
   if(Board){
     GameBoard=Board;
+    Rows = GameBoard.length;
+    Columns = GameBoard[0].length
+    CacheHits = 0;
+    Cutoffs = 0;
+    CacheCutoffs = 0;
+    CachePuts = 0;
+    cch_pts=0;
+    fc=0;
     var results=search();
     postMessage(results)
   }
-  if(x !== undefined&&y!== undefined&&Turn===-1&&GameBoard[x][y]===0){
-    GameBoard[x][y]=Turn
-    var results=search();
-    postMessage(results)
-  }
-  if(x !== undefined&&y!== undefined&&Turn===1&&GameBoard[x][y]===0){
-    GameBoard[x][y]=Turn
-  }
-
 }
