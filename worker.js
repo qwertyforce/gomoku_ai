@@ -670,6 +670,29 @@ onmessage = function(e) {
     GameBoard=Board;
     Rows = GameBoard.length;
     Columns = GameBoard[0].length
+    var sum=0;
+     for (var x = 0; x < Rows; x++) {
+       for (var y = 0; y < Columns; y++) {
+        if(GameBoard[x][y]!==0){
+            sum++
+        }
+    }
+    }
+           if(sum===0){
+        postMessage({
+        firstMoves: 0,
+        bestmove:{i:10,j:10,score:31337},
+        CacheHits:0,
+        CacheCutoffs:0,
+        CachePuts:0,
+        StateCacheHits:0,
+        StateCachePuts:0,
+        fc:0,
+        time:0
+    })
+      return
+    }
+  
     CacheHits = 0;
     Cutoffs = 0;
     CacheCutoffs = 0;
