@@ -527,7 +527,7 @@ function iterative_mtdf(Board) {
         Set_last_best(move);
         console.log(depth)
          console.log(move)
-        if (Math.abs(move.score)>1999990){
+        if (Math.abs(move.score)>1999900){
             return move
         }
         guess = move.score
