@@ -644,19 +644,7 @@ function search(player,depth) {
         time:(t1 - t0) / 1000
     })
 }
- function iterative_negamax(Board,depth){
-  var MaxDepth=0;
-  var bestmove;
-    while(MaxDepth!==depth){
-  MaxDepth+=2 
-   bestmove=negamax(Board, 1, MaxDepth,-Infinity,Infinity,hash(Board),Get_restrictions(GameBoard), 0,0)
-//  Set_last_best(bestmove)
-  if(bestmove.score>1999970){
-      break;
-  }
-   }
-   return bestmove
- }
+
 search(1,8);
 // var x=evaluate_state(GameBoard,1,hash(GameBoard))
 // console.log(x)
