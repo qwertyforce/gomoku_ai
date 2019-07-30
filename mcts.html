@@ -7,8 +7,8 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //3
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0], //6
+    [0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0], //7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
@@ -17,6 +17,18 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
+GameBoard[7][7]=1;
+GameBoard[8][6]=-1;
+GameBoard[8][7]=1;
+GameBoard[7][4]=-1;
+GameBoard[7][5]=1;
+GameBoard[5][9]=-1;
+GameBoard[7][6]=1;
+GameBoard[3][10]=-1;
+GameBoard[5][10]=1;
+GameBoard[9][9]=-1;
+GameBoard[7][8]=1;
+GameBoard[6][6]=-1;
 var Rows=15;
 var Columns=15;
 function  childUCB1(parent, child) {
@@ -29,6 +41,22 @@ function  childUCB1(parent, child) {
   }
   return w / n  +  c * Math.sqrt(Math.log(t) / n);
 }
+
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+   let temp = null;
+for (let i = a.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  temp = a[i];
+  a[i] = a[j];
+  a[j] = temp;
+}
+return a
+}
+
 function Get_restrictions(Board) {
     let min_r = Infinity;
     let min_c = Infinity;
@@ -166,21 +194,6 @@ function getPossibleMoves(state) {
   return possibleMoves;
 }
 
-function getChildren(state, parent) {
-  let tempBoard = simpleCopy(state.board);
-  let turn = state.turn;
-  let possibleMoves = getPossibleMoves(state);
-  let Children = new Array(possibleMoves.length);
-
-  for (let i = 0; i < possibleMoves.length; i++) {
-    play_move(tempBoard, possibleMoves[i],-turn);
-
-    Children[i] = new MctsNode(new State(tempBoard, -1*turn, possibleMoves[i],state.freespaceleft-1,Change_restrictions(state.restrictions,possibleMoves[i][0],possibleMoves[i][1])), parent);
-
-    tempBoard = simpleCopy(state.board)
-  }
-  return Children;
-}
 
 function game_over(state){
 if(state.freespaceleft===0){
@@ -207,10 +220,6 @@ function simulate(state) {
   // Keep playing until game is over
   while (!game_over(tempState)) {
     possibleMoves = getPossibleMoves(tempState);
-
-    // Play a random move from the possible moves
-    // using the same playMove function as used in the
-    // getChildren function.
     random_move=possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
     play_move(tempState.board, random_move,-tempState.turn);
     tempState.restrictions=Change_restrictions(tempState.restrictions,random_move[0],random_move[1])
@@ -231,7 +240,7 @@ function simulate(state) {
 }
 function select_best_node(root){
 var node=root;
-while(node.children.length!==0){
+while(node.possible_moves_left!==null&&node.possible_moves_left.length===0){
   node=get_node_best_ucb1(node)
 }
 return node;
@@ -254,7 +263,12 @@ function get_node_best_ucb1(node){
 }
 
 function expand(node){
-node.children=getChildren(node.State, node);
+  let tempBoard = simpleCopy(node.State.board);
+  let turn = node.State.turn;
+  let Move = node.possible_moves_left.pop();
+  play_move(tempBoard, Move,-turn);
+  var child=new MctsNode(new State(tempBoard, -1*turn, Move,node.State.freespaceleft-1,Change_restrictions(node.State.restrictions,Move[0],Move[1])), node);
+  node.children.push(child);
 }
 
 class MctsNode {
@@ -267,33 +281,28 @@ class MctsNode {
     this.hits = 0;
     this.totalTrials = 0; 
     this.children=[];
+    this.possible_moves_left=null;
   }
      
   search(timeout){
   let end = Date.now() + timeout * 1000
   var node=this;
   var temp;
+
   while (Date.now() < end) {
     let best_node=select_best_node(this);
     var node_status=game_over(best_node.State);
     if(node_status===false){
+      if(best_node.possible_moves_left===null){
+        best_node.possible_moves_left=shuffle(getPossibleMoves(best_node.State));
+      }
       expand(best_node);
     }
-    if(best_node.children.length>0){
-        let unexplored = [];
-      for (let i = 0; i < best_node.children.length; i++){
-        if (best_node.children[i].totalTrials === 0){
-          unexplored.push(best_node.children[i]);
-        }
-      }
-      if (unexplored.length > 0){
-        let random_index=Math.floor(Math.random() * unexplored.length)
-        unexplored[random_index].runSimulation();
-      }
+    if(best_node.possible_moves_left!==null&&best_node.possible_moves_left.length!==0){
+       best_node.children[best_node.children.length-1].runSimulation();
     }else{
       best_node.runSimulation()
     }
-
   }
   let score=-Infinity;
   let best_child;
@@ -345,7 +354,19 @@ class State {
 
   }
 }
+function calc_free_space(){
+  var free=0;
+   for (let i = 0; i < GameBoard.length; i++) {
+    for (let a = 0; a < GameBoard[i].length; a++){
+      if(GameBoard[i][a]===0){
+        free++;
+      }
+    }
+  }
+  return free;
+}
 
-var MCTS= new MctsNode(new State(GameBoard, -1, [7,7],224,Get_restrictions(GameBoard)), null);
+var player=1;
+var MCTS= new MctsNode(new State(GameBoard, -1*player, [7,7],calc_free_space(),Get_restrictions(GameBoard)), null);
 console.log(MCTS.search(10))
 </script>
