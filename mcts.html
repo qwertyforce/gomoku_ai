@@ -8,7 +8,7 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
     [0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
@@ -17,18 +17,10 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
-GameBoard[7][7]=1;
-GameBoard[8][6]=-1;
-GameBoard[8][7]=1;
-GameBoard[7][4]=-1;
-GameBoard[7][5]=1;
-GameBoard[5][9]=-1;
-GameBoard[7][6]=1;
-GameBoard[3][10]=-1;
-GameBoard[5][10]=1;
-GameBoard[9][9]=-1;
-GameBoard[7][8]=1;
-GameBoard[6][6]=-1;
+GameBoard[7][7] = 1;
+GameBoard[6][8] = -1;
+GameBoard[7][8] = 1;
+ GameBoard[9][7] = -1;
 var Rows=15;
 var Columns=15;
 function  childUCB1(parent, child) {
@@ -165,6 +157,14 @@ function simpleCopy(board) {
   }
   return simpleCopy;
 }
+
+function simpleCopy1D(board) {
+  let simpleCopy = new Array(board.length);
+  for (let i = 0; i < board.length; i++) {
+    simpleCopy[i] = board[i];
+  }
+  return simpleCopy;
+}
 function remoteCell(Board, r, c) {
     for (var i = r - 2; i <= r + 2; i++) {
         if (i < 0 || i >= Rows) continue;
@@ -213,7 +213,14 @@ Board[move[0]][move[1]]=turn;
 }
 
 function simulate(state) {
-  let tempState = JSON.parse(JSON.stringify(state));
+//  let tempState = JSON.parse(JSON.stringify(state));
+  let tempState={
+    board : simpleCopy(state.board),
+    turn : state.turn,
+    lastMove : simpleCopy1D(state.lastMove),
+    freespaceleft:state.freespaceleft,
+    restrictions : simpleCopy1D(state.restrictions)
+  }
   let turn=state.turn
   let possibleMoves;
   let random_move; 
@@ -368,5 +375,5 @@ function calc_free_space(){
 
 var player=1;
 var MCTS= new MctsNode(new State(GameBoard, -1*player, [7,7],calc_free_space(),Get_restrictions(GameBoard)), null);
-console.log(MCTS.search(10))
+console.log(MCTS.search(20))
 </script>
