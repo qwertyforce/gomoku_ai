@@ -21,12 +21,14 @@ GameBoard[7][7] = 1;
 GameBoard[6][8] = -1;
 GameBoard[7][8] = 1;
  GameBoard[9][7] = -1;
+
+
 var Rows=15;
 var Columns=15;
 function  childUCB1(parent, child) {
   let w = child.hits;
   let n = child.totalTrials;
-  var c = Math.sqrt(2); // This constant is typically found empirically
+  var c = Math.sqrt(2); 
   var t = parent.totalTrials;
   if(n===0){
     return Infinity
@@ -34,10 +36,57 @@ function  childUCB1(parent, child) {
   return w / n  +  c * Math.sqrt(Math.log(t) / n);
 }
 
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} a items An array containing the items.
- */
+var Table = []
+var Cache = {};
+
+function random32() {
+    let o = new Uint32Array(1);
+    self.crypto.getRandomValues(o);
+    return o[0];
+}
+
+function Hashtable_init() {
+    for (var i = 0; i < Rows; i++) {
+        Table[i] = [];
+        for (var j = 0; j < Columns; j++) {
+            Table[i][j] = []
+            Table[i][j][0] = random32(); //1
+            Table[i][j][1] = random32(); //2
+        }
+
+    }
+
+}
+
+function hash(board) {
+    let h = 0;
+    let p;
+    for (var i = 0; i < Rows; i++) {
+        for (var j = 0; j < Columns; j++) {
+            let Board_value=board[i][j];
+            if (Board_value !== 0) {
+                if (Board_value === -1) {
+                    p = 0
+                } else {
+                    p = 1
+                }
+                h = h ^ Table[i][j][p];
+            }
+        }
+    }
+    return h;
+}
+
+function update_hash(hash, player, row, col) {
+    if (player === -1) {
+        player = 0
+    } else {
+        player = 1
+    }
+    hash = hash ^ Table[row][col][player];
+    return hash
+}
+
 function shuffle(a) {
    let temp = null;
 for (let i = a.length - 1; i > 0; i--) {
@@ -213,7 +262,7 @@ Board[move[0]][move[1]]=turn;
 }
 
 function simulate(state) {
-//  let tempState = JSON.parse(JSON.stringify(state));
+
   let tempState={
     board : simpleCopy(state.board),
     turn : state.turn,
@@ -224,19 +273,17 @@ function simulate(state) {
   let turn=state.turn
   let possibleMoves;
   let random_move; 
-  // Keep playing until game is over
+
   while (!game_over(tempState)) {
     possibleMoves = getPossibleMoves(tempState);
     random_move=possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
     play_move(tempState.board, random_move,-tempState.turn);
     tempState.restrictions=Change_restrictions(tempState.restrictions,random_move[0],random_move[1])
-    // Toggle whose turn it is after each move
+    
     tempState.turn = -tempState.turn;
     tempState.freespaceleft--;
   }
-  // gameResult should take into account the original state (state)
-  // and return a positive value if the person won, or a negative
-  // value if they lost
+
   if(tempState.freespaceleft===0){
     return 0
   }else if(tempState.turn===turn){
@@ -280,11 +327,10 @@ function expand(node){
 
 class MctsNode {
   constructor(State, parent) {
-    this.State = State; // The current state of the board
+    this.State = State; 
     this.parent = parent;
 
-    // As explained in the wiki, the hits, misses, and total trials
-    // are used in the algorithm
+  
     this.hits = 0;
     this.totalTrials = 0; 
     this.children=[];
@@ -332,11 +378,7 @@ class MctsNode {
     }
     this.totalTrials++;
 
-    /** Assuming that the previous turn was by the opponent,
-      * flip the signs of the simulation result while back
-      * propagating. If it wasn't, then leave the sign of
-      * the simulation the same.
-      **/
+
     if (this.parent){
       this.parent.backPropagate(-simulation);
     }
@@ -346,11 +388,7 @@ class MctsNode {
 
 }
 
-/**
-  * In order to be as generic as possible,
-  * I moved the current state of the board
-  * to its own class.
-  **/
+
 class State {
   constructor(board, turn, lastMove=null,freespaceleft,restrictions) {
     this.board = board;
@@ -373,6 +411,7 @@ function calc_free_space(){
   return free;
 }
 
+Hashtable_init();
 var player=1;
 var MCTS= new MctsNode(new State(GameBoard, -1*player, [7,7],calc_free_space(),Get_restrictions(GameBoard)), null);
 console.log(MCTS.search(20))
