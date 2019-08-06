@@ -230,15 +230,15 @@ switch (pieces) {
 function get_directions(Board,x,y){
      let Directions = [[],[],[],[]];
     for (var i = -4; i < 5; i++) {
-        if (x + i >= 0 && x + i <= 14) {
+        if (x + i >= 0 && x + i <= Rows-1) {
             Directions[0].push(Board[x + i][y])
-           if (y + i >= 0 && y + i <= 14 ) {
+           if (y + i >= 0 && y + i <= Columns-1 ) {
             Directions[2].push(Board[x + i][y + i])
         }
         }
-        if (y + i >= 0 && y + i <= 14) {
+        if (y + i >= 0 && y + i <= Columns-1) {
             Directions[1].push(Board[x][y + i])
-              if (x - i >= 0 && x - i <= 14) {
+              if (x - i >= 0 && x - i <= Rows-1) {
             Directions[3].push(Board[x - i][y + i])
         }
         }
