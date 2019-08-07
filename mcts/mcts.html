@@ -18,9 +18,24 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
 GameBoard[7][7] = 1;
-GameBoard[6][8] = -1;
-GameBoard[7][8] = 1;
- GameBoard[9][7] = -1;
+GameBoard[5][7] = -1;
+GameBoard[5][6] = 1;
+GameBoard[4][7] = -1;
+GameBoard[3][4] = 1;
+GameBoard[4][5] = -1;
+GameBoard[6][5] = 1;
+GameBoard[3][7] = -1;
+// GameBoard[7][9] = 1;
+// GameBoard[7][10] = -1;
+// GameBoard[8][8] = 1;S
+// GameBoard[5][5] = -1;
+// GameBoard[8][7] = 1;
+// GameBoard[9][7] = -1;
+// GameBoard[10][5] = 1;
+// GameBoard[9][6] = -1;
+// GameBoard[6][9] = 1;
+// GameBoard[3][5] = -1;
+// GameBoard[10][4] = 1;
 
 
 var Rows=15;
@@ -414,5 +429,5 @@ function calc_free_space(){
 Hashtable_init();
 var player=1;
 var MCTS= new MctsNode(new State(GameBoard, -1*player, [7,7],calc_free_space(),Get_restrictions(GameBoard)), null);
-console.log(MCTS.search(20))
+console.log(MCTS.search(500))
 </script>
