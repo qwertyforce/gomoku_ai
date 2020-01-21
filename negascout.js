@@ -598,6 +598,7 @@ function iterative_negascout(player, Board, depth) {
         MaximumDepth = i;
         bestmove = negascout(Board, player, MaximumDepth, -Infinity, Infinity, hash(Board), Get_restrictions(Board), 0, 0)
         //  Set_last_best(bestmove)
+        console.log(bestmove)
         if (bestmove.score > 1999900) {
             break;
         }
@@ -618,8 +619,8 @@ var cch_pts = 0;
 function search(player, depth) {
     MaximumDepth = depth;
     var t0 = performance.now();
-    //   let bestmove = iterative_negascout(player,GameBoard,depth)
-    let bestmove = negascout(GameBoard, player, depth, -Infinity, Infinity, hash(GameBoard), Get_restrictions(GameBoard), 0, 0)
+    let bestmove = iterative_negascout(player,GameBoard,depth)
+    // let bestmove = negascout(GameBoard, player, depth, -Infinity, Infinity, hash(GameBoard), Get_restrictions(GameBoard), 0, 0)
     var t1 = performance.now();
     Cache = {}
     StateCache = {}
