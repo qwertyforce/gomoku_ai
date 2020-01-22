@@ -51,56 +51,6 @@ function  childUCB1(parent, child) {
   return w / n  +  c * Math.sqrt(Math.log(t) / n);
 }
 
-var Table = []
-var Cache = {};
-
-function random32() {
-    let o = new Uint32Array(1);
-    self.crypto.getRandomValues(o);
-    return o[0];
-}
-
-function Hashtable_init() {
-    for (var i = 0; i < Rows; i++) {
-        Table[i] = [];
-        for (var j = 0; j < Columns; j++) {
-            Table[i][j] = []
-            Table[i][j][0] = random32(); //1
-            Table[i][j][1] = random32(); //2
-        }
-
-    }
-
-}
-
-function hash(board) {
-    let h = 0;
-    let p;
-    for (var i = 0; i < Rows; i++) {
-        for (var j = 0; j < Columns; j++) {
-            let Board_value=board[i][j];
-            if (Board_value !== 0) {
-                if (Board_value === -1) {
-                    p = 0
-                } else {
-                    p = 1
-                }
-                h = h ^ Table[i][j][p];
-            }
-        }
-    }
-    return h;
-}
-
-function update_hash(hash, player, row, col) {
-    if (player === -1) {
-        player = 0
-    } else {
-        player = 1
-    }
-    hash = hash ^ Table[row][col][player];
-    return hash
-}
 
 function shuffle(a) {
    let temp = null;
@@ -307,6 +257,7 @@ function simulate(state) {
     return -1
   }
 }
+
 function select_best_node(root){
 var node=root;
 while(node.possible_moves_left!==null&&node.possible_moves_left.length===0){
@@ -426,7 +377,7 @@ function calc_free_space(){
   return free;
 }
 
-Hashtable_init();
+
 var player=1;
 var MCTS= new MctsNode(new State(GameBoard, -1*player, [7,7],calc_free_space(),Get_restrictions(GameBoard)), null);
 console.log(MCTS.search(500))
