@@ -336,7 +336,7 @@ function compare(a, b) {
         return -1;
     return 0;
 }
-var BoardGenerator_Cache = {}
+
 
 function BoardGenerator(restrictions, Board, player) {
     let availSpots_score = []; //c is j  r is i;
@@ -351,10 +351,8 @@ function BoardGenerator(restrictions, Board, player) {
                 move = {}
                 move.i = i;
                 move.j = j;
-                // move.score = evalute_move(Board, i, j, player)
                 move.score = evalute_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
-                    //BoardGenerator_Cache[hash]=move
                     return [move]
                 }
                 availSpots_score.push(move)
@@ -379,7 +377,6 @@ function evaluate_direction(direction_arr, player) {
                 enemy++
             }
         }
-        //  console.log(you,enemy)
         score += evalff(get_seq(you, enemy));
         if ((score >= 800000)) {
             return WIN_DETECTED;
