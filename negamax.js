@@ -336,7 +336,6 @@ function compare(a, b) {
         return -1;
     return 0;
 }
-var BoardGenerator_Cache = {}
 
 function BoardGenerator(restrictions, Board, player) {
     let availSpots_score = []; //c is j  r is i;
