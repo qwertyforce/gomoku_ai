@@ -18,36 +18,38 @@ var GameBoard = [
 ]
 GameBoard[7][7] = 1;
 GameBoard[8][8] = -1;
-// GameBoard[7][9] = 1;
-// GameBoard[8][7] = -1;
-// GameBoard[6][8] = 1;
-// GameBoard[5][9] = -1;
-// GameBoard[7][10] = 1;
-// GameBoard[7][8] = -1;
-// GameBoard[6][9] = 1;
-// GameBoard[6][10] = -1;
-// GameBoard[7][11] = 1;
-// GameBoard[9][11] = -1;
-// GameBoard[8][10] = 1;
-// GameBoard[7][12] = -1;
-// GameBoard[8][6] = 1;
-// GameBoard[4][6] = -1;
-// GameBoard[9][8] = 1;
-// GameBoard[9][9] = -1;
-// GameBoard[10][6] = 1;
-// GameBoard[9][6] = -1;
-// GameBoard[7][5] = 1;
-// GameBoard[9][5] = -1;
-// GameBoard[6][4] = 1;
-// GameBoard[5][3] = -1;
-// GameBoard[10][7] = 1;
-// GameBoard[10][5] = -1;
-// GameBoard[11][4] = 1;
-// GameBoard[8][9] = -1;
-// GameBoard[9][4] = 1;
-// GameBoard[9][10] = -1;
-// GameBoard[6][7]=1;
-// GameBoard[10][11]=-1;
+GameBoard[6][6] = 1;
+GameBoard[7][5] = -1;
+GameBoard[9][7] = 1;
+GameBoard[8][7] = -1;
+GameBoard[8][6] = 1;
+GameBoard[7][6] = -1;
+GameBoard[6][8] = 1;
+GameBoard[5][9] = -1;
+GameBoard[6][5] = 1;
+GameBoard[6][7] = -1;
+GameBoard[5][8] = 1;
+GameBoard[9][8] = -1;
+GameBoard[10][8] = 1;
+GameBoard[8][9] = -1;
+GameBoard[7][8] = 1;
+GameBoard[10][9] = -1;
+GameBoard[11][10] = 1;
+GameBoard[11][9] = -1;
+GameBoard[9][9] = 1;
+GameBoard[8][10] = -1;
+GameBoard[8][11] = 1;
+GameBoard[7][10] = -1;
+GameBoard[6][11] = 1;
+GameBoard[6][10] = -1;
+GameBoard[9][10] = 1;
+GameBoard[4][8] = -1;
+GameBoard[7][11] = 1;
+GameBoard[5][11] = -1;
+GameBoard[10][11]=1;
+GameBoard[9][11] = -1;
+GameBoard[12][9]=1;
+GameBoard[7][9] = -1;
 
 const aiPlayer = 1;
 const huPlayer = -1;
@@ -590,8 +592,11 @@ function iterative_negamax(player, Board, depth) {
     while (i !== depth + 2) {
         MaximumDepth = i;
         bestmove = negamax(Board, player, MaximumDepth, -Infinity, Infinity, hash(Board), Get_restrictions(Board), 0, 0)
-        console.log(bestmove)
         //  Set_last_best(bestmove)
+        console.log(i)
+        console.log(bestmove)
+        var t11 = performance.now();
+        console.log((t11 - t00) / 1000)
         if (bestmove.score > 1999900) {
             break;
         }
@@ -609,6 +614,7 @@ var CacheCutoffs = 0;
 var CachePuts = 0;
 var cch_hts = 0;
 var cch_pts = 0;
+var t00 = performance.now(); 
 
 function search(player, depth) {
     MaximumDepth = depth;
