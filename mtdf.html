@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+'use strict';
+var Engine = new Worker("mtdf_worker.js");
+
+var GameBoard = [
+    //0 1  2  3  4  5  6  7  8  9  0  1  2  3  4      
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //0
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //1
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //2
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //3
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //11
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //12
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
+]
+
+
+
+GameBoard[7][7] = -1;
+GameBoard[8][8] = 1;
+GameBoard[6][6] = -1;
+GameBoard[7][5] = 1;
+GameBoard[9][7] = -1;
+GameBoard[8][7] = 1;
+GameBoard[8][6] = -1;
+GameBoard[7][6] = 1;
+GameBoard[6][8] = -1;
+GameBoard[5][9] = 1;
+GameBoard[6][5] = -1;
+GameBoard[6][7] = 1;
+GameBoard[5][8] = -1;
+GameBoard[9][8] = 1;
+GameBoard[10][8] = -1;
+GameBoard[8][9] = 1;
+GameBoard[7][8] = -1;
+GameBoard[10][9] = 1;
+GameBoard[11][10] = -1;
+GameBoard[11][9] = 1;
+GameBoard[9][9] = -1;
+GameBoard[8][10] = 1;
+GameBoard[8][11] = -1;
+GameBoard[7][10] = 1;
+GameBoard[6][11] = -1;
+GameBoard[6][10] = 1;
+GameBoard[9][10] = -1;
+GameBoard[4][8] = 1;
+GameBoard[7][11] = -1;
+GameBoard[5][11] = 1;
+GameBoard[10][11] = -1;
+GameBoard[9][11] = 1;
+GameBoard[12][9] = -1;
+// GameBoard[7][9] = 1;
+// GameBoard[8][8] = -1;
+// GameBoard[7][7] = 1;
+// GameBoard[8][8] = -1;
+// GameBoard[7][7] = 1;
+// GameBoard[8][8] = -1;
+// GameBoard[7][7] = 1;
+
+
+
+ 
+Engine.onmessage = function(e) {
+    console.log(e.data.bestmove);
+    console.log(`Cache Hits: ${e.data.CacheHits}`)
+    console.log(`Cache Cutoffs: ${e.data.CacheCutoffs}`)
+    console.log(`Cache Puts: ${e.data.CachePuts}`)
+    console.log(`function calls ${e.data.fc}`)
+    console.log(`Call to iterative mtdf took ${e.data.time} seconds.`)
+    console.log(`StateCacheHits: ${e.data.StateCacheHits}`)
+    console.log(`StateCachePuts: ${e.data.StateCachePuts}`)
+    console.log(e.data.firstMoves)
+    }
+//var x=JSON.stringify(GameBoard)
+var MaximumTimeForMove=60000;
+Engine.postMessage([GameBoard,1,MaximumTimeForMove]);
+</script>              
+</head>
+</html>

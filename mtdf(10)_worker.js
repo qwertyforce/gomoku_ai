@@ -1,60 +1,10 @@
-var GameBoard = [
-    //0 1  2  3  4  5  6  7  8  9  0  1  2  3  4      
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //0
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //2
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //3
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //11
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //12
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
-]
-GameBoard[7][7] = 1;
-GameBoard[8][8] = -1;
-// GameBoard[7][9] = 1;
-// GameBoard[8][7] = -1;
-// GameBoard[6][8] = 1;
-// GameBoard[5][9] = -1;
-// GameBoard[7][10] = 1;
-// GameBoard[7][8] = -1;
-// GameBoard[6][9] = 1;
-// GameBoard[6][10] = -1;
-// GameBoard[7][11] = 1;
-// GameBoard[9][11] = -1;
-// GameBoard[8][10] = 1;
-// GameBoard[7][12] = -1;
-// GameBoard[8][6] = 1;
-// GameBoard[4][6] = -1;
-// GameBoard[9][8] = 1;
-// GameBoard[9][9] = -1;
-// GameBoard[10][6] = 1;
-// GameBoard[9][6] = -1;
-// GameBoard[7][5] = 1;
-// GameBoard[9][5] = -1;
-// GameBoard[6][4] = 1;
-// GameBoard[5][3] = -1;
-// GameBoard[10][7] = 1;
-// GameBoard[10][5] = -1;
-// GameBoard[11][4] = 1;
-// GameBoard[8][9] = -1;
-// GameBoard[9][4] = 1;
-// GameBoard[9][10] = -1;
-// GameBoard[6][7]=1;
-// GameBoard[10][11]=-1;
-
+var GameBoard;
 const aiPlayer = 1;
 const huPlayer = -1;
 var fc = 0;
 const FiguresToWin = 5;
-const Rows = GameBoard.length;
-const Columns = GameBoard[0].length
+var Rows = 15;
+var Columns = 15;
 const WIN_DETECTED = false;
 const LiveOne = 10;
 const DeadOne = 1;
@@ -65,6 +15,7 @@ const DeadThree = 100;
 const LiveFour = 10000;
 const DeadFour = 1000;
 const Five = 100000;
+
 
 function eval_board(Board, pieceType, restrictions) {
     var score = 0;
@@ -258,6 +209,19 @@ function checkwin(Board, x, y) {
     }
 }
 
+function Get_last_best() {
+    return bestmoves;
+}
+
+function Set_last_best(bestmove) {
+    for (var i = 0; i < bestmoves.length; i++) {
+        if (bestmoves[i].i === bestmove.i && bestmoves[i].j === bestmove.j) {
+            bestmoves.splice(i, 1);
+        }
+    }
+    bestmoves.unshift(bestmove)
+}
+
 function remoteCell(Board, r, c) {
     for (var i = r - 2; i <= r + 2; i++) {
         if (i < 0 || i >= Rows) continue;
@@ -351,10 +315,8 @@ function BoardGenerator(restrictions, Board, player) {
                 move = {}
                 move.i = i;
                 move.j = j;
-                // move.score = evalute_move(Board, i, j, player)
                 move.score = evalute_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
-                    //BoardGenerator_Cache[hash]=move
                     return [move]
                 }
                 availSpots_score.push(move)
@@ -362,32 +324,24 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-    //  return availSpots_score.slice(0,20)
-    return availSpots_score;
+    return availSpots_score.slice(0, 10)   //MAY BE HARMFUL, check if it works for you
+    // return availSpots_score;
 }
 
-function evaluate_direction(direction_arr, player) {
+function evalute_move(Board, x, y, player) {
     let score = 0;
-    for (var i = 0;
-        (i + 4) < direction_arr.length; i++) {
-        let you = 0;
-        let enemy = 0;
-        for (var j = 0; j <= 4; j++) {
-            if (direction_arr[i + j] === player) {
-                you++
-            } else if (direction_arr[i + j] === -player) {
-                enemy++
-            }
-        }
-        //  console.log(you,enemy)
-        score += evalff(get_seq(you, enemy));
-        if ((score >= 800000)) {
-            return WIN_DETECTED;
+    let Directions = get_directions(Board, x, y);
+    let temp_score;
+    for (var i = 0; i < 4; i++) {
+        temp_score = evaluate_direction(Directions[i], player);
+        if (temp_score === WIN_DETECTED) {
+            return WIN_DETECTED
+        } else {
+            score += temp_score
         }
     }
-    return score
+    return score;
 }
-
 
 function evalff(seq) {
     switch (seq) {
@@ -429,20 +383,29 @@ function get_seq(y, e) {
     }
 }
 
-function evalute_move(Board, x, y, player) {
+function evaluate_direction(direction_arr, player) {
     let score = 0;
-    let Directions = get_directions(Board, x, y);
-    let temp_score;
-    for (var i = 0; i < 4; i++) {
-        temp_score = evaluate_direction(Directions[i], player);
-        if (temp_score === WIN_DETECTED) {
-            return WIN_DETECTED
-        } else {
-            score += temp_score
+    for (var i = 0;
+        (i + 4) < direction_arr.length; i++) {
+        let you = 0;
+        let enemy = 0;
+        for (var j = 0; j <= 4; j++) {
+            if (direction_arr[i + j] === player) {
+                you++
+            } else if (direction_arr[i + j] === -player) {
+                enemy++
+            }
+        }
+        score += evalff(get_seq(you, enemy));
+        if ((score >= 800000)) {
+            return WIN_DETECTED;
         }
     }
-    return score;
+    return score
 }
+
+
+
 var StateCache = {};
 
 function evaluate_state(Board, player, hash, restrictions) {
@@ -458,7 +421,6 @@ function evaluate_state(Board, player, hash, restrictions) {
     cch_pts++;
     return score;
 }
-
 var Table = []
 var Cache = {};
 
@@ -511,7 +473,79 @@ function update_hash(hash, player, row, col) {
 }
 
 
+function mtdf(Board, f, d, restrictions) {
+    var g = f;
+    var upperbound = Infinity;
+    var lowerbound = -Infinity;
+    var b;
+    var result
+    var last_succesful;
+    do {
+        if (g === lowerbound) {
+            b = g + 1
+        } else {
+            b = g;
+        }
+        if (TIMEOUT()) {
+            return "stop";
+        }
+        result = negamax(Board, 1, d, b - 1, b, hash(Board), restrictions, 0, 0)
+        if (TIMEOUT()) {
+            return "stop";
+        }
+        if (result !== undefined) {
+            g = result.score
+            last_succesful = result
+        }
+        if (g < b) {
+            upperbound = g
+        } else {
+            lowerbound = g
+        }
+    } while (lowerbound < upperbound)
+    return last_succesful;
+}
+
+function TIMEOUT() {
+    if ((Date.now() - startTime) >= MaximumTimeForMove) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function iterative_mtdf(Board) {
+    var restrictions = Get_restrictions(Board)
+    var guess = evaluate_state(Board, 1, hash(GameBoard), [0, 0, Rows - 1, Columns - 1])
+    console.log(`Guess for best score: ${guess}`)
+    bestmoves = BoardGenerator(restrictions, Board, 1);
+    var move;
+    var temp;
+    var depth = 2;
+    while (!TIMEOUT()) {
+        MaximumDepth = depth;
+        temp = mtdf(Board, guess, depth, restrictions);
+        if (temp === "stop") {
+            break;
+        }
+        move = temp;
+        Set_last_best(move);
+        console.log(depth)
+        console.log(move)
+        if (Math.abs(move.score) > 1999900) {
+            return move
+        }
+        guess = move.score
+        depth += 2;
+    }
+    return move;
+}
+var cch_hts = 0
+
 function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last_j) {
+    if (TIMEOUT()) {
+        return 1
+    }
     const alphaOrig = a;
     if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
         CacheHits++;
@@ -542,7 +576,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         return evaluate_state(newBoard, player, hash, restrictions)
     }
     var availSpots;
-    availSpots = BoardGenerator(restrictions, newBoard, player);
+    if (depth === MaximumDepth) {
+        availSpots = Get_last_best();
+    } else {
+        availSpots = BoardGenerator(restrictions, newBoard, player);
+    }
+
     if (availSpots.length === 0) {
         return 0;
     }
@@ -573,7 +612,9 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         }
     }
     CachePuts++
-    Cache[hash] = {score: bestvalue};
+    Cache[hash] = {
+        score: bestvalue
+    };
     Cache[hash].depth = depth
     if (bestvalue <= alphaOrig) {
         Cache[hash].Flag = 1
@@ -587,55 +628,32 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     } else {
         return bestvalue
     }
+
+
 }
 
-function mtdf(Board, f, d, restrictions) {
-    var g = f;
-    var upperbound = Infinity;
-    var lowerbound = -Infinity;
-    var b;
-    var result
-    var last_succesful;
-    do {
-        if (g === lowerbound) {
-            b = g + 1
-        } else {
-            b = g;
-        }
-        result = negamax(Board, 1, d, b - 1, b, hash(Board), restrictions, 0, 0)
-        if (result !== undefined) {
-            g = result.score
-            last_succesful = result
-        }
-        if (g < b) {
-            upperbound = g
-        } else {
-            lowerbound = g
-        }
-    } while (lowerbound < upperbound)
-    return last_succesful;
-}
+
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
+var bestmoves = []; //For move ordering in iterative mtdf  (fisrt move in the list is best move of previous depth)
+var MaximumTimeForMove;
 Hashtable_init();
 var CacheHits = 0;
 var Cutoffs = 0;
 var CacheCutoffs = 0;
 var CachePuts = 0;
-var cch_hts = 0;
 var cch_pts = 0;
+var startTime;
 
-function search(player, depth) {
-    MaximumDepth = depth;
+function search() {
+    startTime = Date.now();
     var t0 = performance.now();
-    var restrictions = Get_restrictions(GameBoard)
-    var guess = evaluate_state(GameBoard, 1, hash(GameBoard), [0, 0, Rows - 1, Columns - 1])
-    console.log(`Guess for best score ${guess}`)
-    let bestmove = mtdf(GameBoard, guess, depth, restrictions)
+    let bestmove = iterative_mtdf(GameBoard)
     var t1 = performance.now();
     Cache = {}
     StateCache = {}
-    console.log({
+    return ({
+        firstMoves: BoardGenerator(Get_restrictions(GameBoard), GameBoard, 1),
         bestmove: bestmove,
         CacheHits: CacheHits,
         CacheCutoffs: CacheCutoffs,
@@ -646,5 +664,45 @@ function search(player, depth) {
         time: (t1 - t0) / 1000
     })
 }
+onmessage = function(e) {
+    var Board = e.data[0]
+    var Turn = e.data[1]
+    MaximumTimeForMove = e.data[2]
+    console.log(e.data)
+    if (Board) {
+        GameBoard = Board;
+        Rows = GameBoard.length;
+        Columns = GameBoard[0].length
+        var sum = 0;
+        for (var x = 0; x < Rows; x++) {
+            for (var y = 0; y < Columns; y++) {
+                if (GameBoard[x][y] !== 0) {
+                    sum++
+                }
+            }
+        }
+        if (sum === 0) {
+            postMessage({
+                firstMoves: 0,
+                bestmove: {i: 10,j: 10,score: 31337},
+                CacheHits: 0,
+                CacheCutoffs: 0,
+                CachePuts: 0,
+                StateCacheHits: 0,
+                StateCachePuts: 0,
+                fc: 0,
+                time: 0
+            })
+            return
+        }
 
-search(1, 8);
+        CacheHits = 0;
+        Cutoffs = 0;
+        CacheCutoffs = 0;
+        CachePuts = 0;
+        cch_pts = 0;
+        fc = 0;
+        var results = search();
+        postMessage(results)
+    }
+}

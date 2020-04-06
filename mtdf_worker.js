@@ -326,8 +326,8 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-    return availSpots_score.slice(0, 10)   //MAY BE HARMFUL, check if it works for you
-    // return availSpots_score;
+    // return availSpots_score.slice(0, 10)   //MAY BE HARMFUL, check if it works for you
+    return availSpots_score;
 }
 
 function evalute_move(Board, x, y, player) {
@@ -398,10 +398,8 @@ function evaluate_direction(direction_arr, player) {
                 enemy++
             }
         }
-        //  console.log(you,enemy)
         score += evalff(get_seq(you, enemy));
         if ((score >= 800000)) {
-            //console.log("already won")
             return WIN_DETECTED;
         }
     }
@@ -580,17 +578,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         return evaluate_state(newBoard, player, hash, restrictions)
     }
     var availSpots;
-    // if(BoardGenerator_Cache[hash]!==undefined){
-    //   availSpots=BoardGenerator_Cache[hash];
-    //   cch_hts++
-    // }else{
     if (depth === MaximumDepth) {
         availSpots = Get_last_best();
     } else {
         availSpots = BoardGenerator(restrictions, newBoard, player);
     }
 
-    // }
     if (availSpots.length === 0) {
         return 0;
     }
