@@ -16,38 +16,66 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
+
 GameBoard[7][7] = 1;
 GameBoard[8][8] = -1;
-// GameBoard[7][9] = 1;
-// GameBoard[8][7] = -1;
-// GameBoard[6][8] = 1;
-// GameBoard[5][9] = -1;
-// GameBoard[7][10] = 1;
-// GameBoard[7][8] = -1;
-// GameBoard[6][9] = 1;
+GameBoard[6][6] = 1;
+GameBoard[7][5] = -1;
+GameBoard[9][7] = 1;
+GameBoard[8][7] = -1;
+GameBoard[8][6] = 1;
+GameBoard[7][6] = -1;
+GameBoard[6][8] = 1;
+GameBoard[5][9] = -1;
+GameBoard[6][5] = 1;
+GameBoard[6][7] = -1;
+GameBoard[5][8] = 1;
+GameBoard[9][8] = -1;
+GameBoard[10][8] = 1;
+GameBoard[8][9] = -1;
+GameBoard[7][8] = 1;
+GameBoard[10][9] = -1;
+GameBoard[11][10] = 1;
+GameBoard[11][9] = -1;
+GameBoard[9][9] = 1;
+GameBoard[8][10] = -1;
+GameBoard[8][11] = 1;
+GameBoard[7][10] = -1;
+GameBoard[6][11] = 1;
+GameBoard[6][10] = -1;
+GameBoard[9][10] = 1;
+GameBoard[4][8] = -1;
+GameBoard[7][11] = 1;
+GameBoard[5][11] = -1;
+GameBoard[10][11]=1;
+GameBoard[9][11] = -1;
+GameBoard[12][9]=1;
+GameBoard[7][9] = -1;
+// GameBoard[8][3]=1;
+// GameBoard[3][3] = -1;
+// GameBoard[4][3]=1;
+// GameBoard[4][4] = -1;
+// GameBoard[2][2]=1;
+// GameBoard[2][10] = -1;
+// GameBoard[4][8]=1;
 // GameBoard[6][10] = -1;
-// GameBoard[7][11] = 1;
-// GameBoard[9][11] = -1;
-// GameBoard[8][10] = 1;
-// GameBoard[7][12] = -1;
-// GameBoard[8][6] = 1;
-// GameBoard[4][6] = -1;
-// GameBoard[9][8] = 1;
-// GameBoard[9][9] = -1;
-// GameBoard[10][6] = 1;
-// GameBoard[9][6] = -1;
-// GameBoard[7][5] = 1;
-// GameBoard[9][5] = -1;
-// GameBoard[6][4] = 1;
-// GameBoard[5][3] = -1;
-// GameBoard[10][7] = 1;
-// GameBoard[10][5] = -1;
-// GameBoard[11][4] = 1;
-// GameBoard[8][9] = -1;
-// GameBoard[9][4] = 1;
-// GameBoard[9][10] = -1;
-// GameBoard[6][7]=1;
+// GameBoard[9][4]=1;
+// GameBoard[6][12] = -1;
+// GameBoard[6][11]=1;
+// GameBoard[11][6] = -1;
+// GameBoard[4][10]=1;
+// GameBoard[6][10] = -1;
+// GameBoard[7][12]=1;
+// GameBoard[6][12] = -1;
+// GameBoard[6][13]=1;
+// GameBoard[9][3] = -1;
+// GameBoard[7][11]=1;
+// GameBoard[7][13] = -1;
+// GameBoard[9][10]=1;
+// GameBoard[5][14] = -1;
 // GameBoard[10][11]=-1;
+
+
 
 const aiPlayer = 1;
 const huPlayer = -1;
@@ -507,6 +535,9 @@ function update_hash(hash, player, row, col) {
 
 
 function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, last_i, last_j) {
+    if (TIMEOUT()) {
+        return 1
+    }
     var alphaOrig = alpha;
     if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
         CacheHits++;
@@ -588,20 +619,38 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
     }
 }
 
-function iterative_negascout(player, Board, depth) {
+function iterative_negascout(player, Board) {
     var bestmove;
     var i = 2;
-    while (i !== depth + 2) {
-        MaximumDepth = i;
-        bestmove = negascout(Board, player, MaximumDepth, -Infinity, Infinity, hash(Board), Get_restrictions(Board), 0, 0)
+    var depth = 2;
+    while (!TIMEOUT()) {
+        let temp_bestmove;
+        MaximumDepth = depth;
+        temp_bestmove = negascout(Board, player, MaximumDepth, -Infinity, Infinity, hash(Board), Get_restrictions(Board), 0, 0)
+         if (TIMEOUT()) {
+            return bestmove;
+        }
+        bestmove=temp_bestmove
         //  Set_last_best(bestmove)
+        console.log(depth)
         console.log(bestmove)
+        var t11 = performance.now();
+        console.log((t11 - t00) / 1000)
         if (bestmove.score > 1999900) {
             break;
         }
-        i += 2;
+        depth += 2;
     }
     return bestmove
+}
+
+
+function TIMEOUT() {
+    if ((Date.now() - startTime) >= MaximumTimeForMove) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
@@ -612,12 +661,14 @@ var CacheCutoffs = 0;
 var CachePuts = 0;
 var cch_hts = 0;
 var cch_pts = 0;
-
-function search(player, depth) {
-    MaximumDepth = depth;
+var t00 = performance.now(); 
+var MaximumTimeForMove;
+var startTime
+function search(player, time) {
+    startTime = Date.now();
+    MaximumTimeForMove=time
     var t0 = performance.now();
-    let bestmove = iterative_negascout(player,GameBoard,depth)
-    // let bestmove = negascout(GameBoard, player, depth, -Infinity, Infinity, hash(GameBoard), Get_restrictions(GameBoard), 0, 0)
+    let bestmove = iterative_negascout(player,GameBoard)
     var t1 = performance.now();
     Cache = {}
     StateCache = {}
@@ -632,4 +683,4 @@ function search(player, depth) {
         time: (t1 - t0) / 1000
     })
 }
-search(1, 8);
+search(1, 60000);
