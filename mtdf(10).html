@@ -81,7 +81,6 @@ Engine.onmessage = function(e) {
     console.log(`StateCachePuts: ${e.data.StateCachePuts}`)
     console.log(e.data.firstMoves)
     }
-//var x=JSON.stringify(GameBoard)
 var MaximumTimeForMove=60000;
 Engine.postMessage([GameBoard,1,MaximumTimeForMove]);
 </script>              

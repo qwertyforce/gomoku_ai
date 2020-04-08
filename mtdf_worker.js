@@ -3,8 +3,8 @@ const aiPlayer = 1;
 const huPlayer = -1;
 var fc = 0;
 const FiguresToWin = 5;
-var Rows = 15;
-var Columns = 15;
+var Rows;
+var Columns;
 const WIN_DETECTED = false;
 const LiveOne = 10;
 const DeadOne = 1;
@@ -315,10 +315,8 @@ function BoardGenerator(restrictions, Board, player) {
                 move = {}
                 move.i = i;
                 move.j = j;
-                // move.score = evalute_move(Board, i, j, player)
                 move.score = evalute_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
-                    //BoardGenerator_Cache[hash]=move
                     return [move]
                 }
                 availSpots_score.push(move)
@@ -432,7 +430,7 @@ function random32() {
     return o[0];
 }
 
-function Hashtable_init() {
+function Table_init() {
     for (var i = 0; i < Rows; i++) {
         Table[i] = [];
         for (var j = 0; j < Columns; j++) {
@@ -639,7 +637,6 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
 var bestmoves = []; //For move ordering in iterative mtdf  (fisrt move in the list is best move of previous depth)
 var MaximumTimeForMove;
-Hashtable_init();
 var CacheHits = 0;
 var Cutoffs = 0;
 var CacheCutoffs = 0;
@@ -704,6 +701,7 @@ onmessage = function(e) {
         CachePuts = 0;
         cch_pts = 0;
         fc = 0;
+        Table_init();
         var results = search();
         postMessage(results)
     }
