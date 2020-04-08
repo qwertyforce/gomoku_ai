@@ -466,7 +466,7 @@ function random32() {
     return o[0];
 }
 
-function Hashtable_init() {
+function Table_init() {
     for (var i = 0; i < Rows; i++) {
         Table[i] = [];
         for (var j = 0; j < Columns; j++) {
@@ -624,7 +624,7 @@ function TIMEOUT() {
     }
 }
 var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
-Hashtable_init();
+Table_init();
 var CacheHits = 0;
 var Cutoffs = 0;
 var CacheCutoffs = 0;
