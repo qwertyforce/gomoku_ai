@@ -153,7 +153,6 @@ function eval_board(Board, pieceType, restrictions) {
     for (var n = min_r - (max_c - min_c); n <= max_r; n++) {
         var r = n;
         var c = min_c;
-        var str = '';
         while (r <= max_r && c <= max_c) {
             if (r >= min_r && r <= max_r) {
                 if (Board[r][c] === pieceType) {
