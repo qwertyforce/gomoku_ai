@@ -1,4 +1,4 @@
-var GameBoard = [
+const GameBoard = [
     //0 1  2  3  4  5  6  7  8  9  0  1  2  3  4      
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //0
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //1
@@ -53,7 +53,7 @@ var GameBoard = [
 
 const aiPlayer = 1;
 const huPlayer = -1;
-var fc = 0;
+let fc = 0;
 const FiguresToWin = 5;
 const Rows = GameBoard.length;
 const Columns = GameBoard[0].length
@@ -149,7 +149,7 @@ function eval_board(Board, pieceType, restrictions) {
         }
     }
 
-    for (var n = min_r - (max_c - min_c); n <= max_r; n++) {
+    for (let n = min_r - (max_c - min_c); n <= max_r; n++) {
         let r = n;
         let c = min_c;
         while (r <= max_r && c <= max_c) {
@@ -252,7 +252,7 @@ function get_directions(Board, x, y) {
 
 function checkwin(Board, x, y) {
     const Directions = get_directions(Board, x, y)
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         if (check_directions(Directions[i])) {
             return true
         }
@@ -275,8 +275,8 @@ function Get_restrictions(Board) {
     let min_c = Infinity;
     let max_r = -Infinity;
     let max_c = -Infinity;
-    for (var i = 0; i < Rows; i++) {
-        for (var j = 0; j < Columns; j++) {
+    for (let i = 0; i < Rows; i++) {
+        for (let j = 0; j < Columns; j++) {
             if (Board[i][j] !== 0) {
                 min_r = Math.min(min_r, i)
                 min_c = Math.min(min_c, j)
@@ -344,13 +344,13 @@ function BoardGenerator(restrictions, Board, player) {
     const min_c = restrictions[1];
     const max_r = restrictions[2];
     const max_c = restrictions[3];;
-    for (var i = min_r - 2; i <= max_r + 2; i++) {
-        for (var j = min_c - 2; j <= max_c + 2; j++) {
+    for (let i = min_r - 2; i <= max_r + 2; i++) {
+        for (let j = min_c - 2; j <= max_c + 2; j++) {
             if (Board[i][j] === 0 && !remoteCell(Board, i, j)) {
                 const move = {}
                 move.i = i;
                 move.j = j;
-                move.score = evalute_move(Board, i, j, player)
+                move.score = evaluate_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
                     return [move]
                 }
@@ -368,7 +368,7 @@ function evaluate_direction(direction_arr, player) {
     for (let i = 0;(i + 4) < direction_arr.length; i++) {
         let you = 0;
         let enemy = 0;
-        for (var j = 0; j <= 4; j++) {
+        for (let j = 0; j <= 4; j++) {
             if (direction_arr[i + j] === player) {
                 you++
             } else if (direction_arr[i + j] === -player) {
@@ -424,11 +424,11 @@ function get_seq(y, e) {
     }
 }
 
-function evalute_move(Board, x, y, player) {
+function evaluate_move(Board, x, y, player) {
     let score = 0;
     const Directions = get_directions(Board, x, y);
     let temp_score;
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         temp_score = evaluate_direction(Directions[i], player);
         if (temp_score === WIN_DETECTED) {
             return WIN_DETECTED
@@ -454,7 +454,7 @@ function evaluate_state(Board, player, hash, restrictions) {
     return score;
 }
 
-var Table = []
+const Table = []
 const Cache = new Map();
 
 function random32() {
@@ -556,12 +556,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     //     console.log(availSpots[y].i,availSpots[y].j,availSpots[y].score)
     // }
     // console.log("============")
-    for (var y = 0; y < availSpots.length; y++) {
+    for (let y = 0; y < availSpots.length; y++) {
         i = availSpots[y].i;
         j = availSpots[y].j;
         newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
-        var restrictions_temp = Change_restrictions(restrictions, i, j)
+        const restrictions_temp = Change_restrictions(restrictions, i, j)
         value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
         // console.log(i,j,value)
         newBoard[i][j] = 0;
@@ -608,7 +608,7 @@ function iterative_negamax(player, Board, depth) {
         bestmove = negamax(Board, player, MaximumDepth, -Infinity, Infinity, hash(Board), Get_restrictions(Board), 0, 0)
         console.log(i)
         console.log(bestmove)
-        var t11 = performance.now();
+        let t11 = performance.now();
         console.log((t11 - t00) / 1000)
         if (bestmove.score > 1999900) {
             break;
@@ -654,5 +654,5 @@ function search(player, depth) {
 // console.log(hash(GameBoard))
 // console.log(evaluate_state(GameBoard,1,0,Get_restrictions(GameBoard)))
 // var dergef=0;
-search(1,8);
+search(1,6);
 // console.log(dergef)
