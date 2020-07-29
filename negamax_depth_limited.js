@@ -438,7 +438,7 @@ function evaluate_move(Board, x, y, player) {
     }
     return score;
 }
-const StateCache = new Map();
+
 
 function evaluate_state(Board, player, hash, restrictions) {
     const  black_score = eval_board(Board, -1, restrictions);
@@ -453,9 +453,6 @@ function evaluate_state(Board, player, hash, restrictions) {
     cch_pts++;
     return score;
 }
-
-const Table = []
-const Cache = new Map();
 
 function random32() {
     let o = new Uint32Array(1);
@@ -511,7 +508,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     const CacheNode =Cache.get(hash)  
     if ((CacheNode!== undefined) && (CacheNode.depth >= depth)) {
         CacheHits++;
-        let score = CacheNode.score;
+        const score = CacheNode.score;
         if (CacheNode.Flag === 0) {
             CacheCutoffs++;
             return score
@@ -552,7 +549,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
         const newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
         const restrictions_temp = Change_restrictions(restrictions, i, j)
-        let value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
+        const value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
         newBoard[i][j] = 0;
         if (value > bestvalue) {
             bestvalue = value
@@ -604,7 +601,10 @@ function iterative_negamax(player, Board, depth) {
 }
 
 
-let MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
+const Table = []
+const Cache = new Map();
+const StateCache = new Map();
+let MaximumDepth; //GLOBAL USED IN SEARCH FUNCTION
 Table_init();
 let CacheHits = 0;
 let Cutoffs = 0;
