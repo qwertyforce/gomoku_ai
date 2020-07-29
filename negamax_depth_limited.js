@@ -450,7 +450,7 @@ function evaluate_state(Board, player, hash, restrictions) {
         score = (white_score - black_score);
     }
     StateCache.set(hash,score);
-    cch_pts++;
+    StateCachePuts++;
     return score;
 }
 
@@ -530,7 +530,7 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     if (depth === 0) {
         const StateCacheNode=StateCache.get(hash);
         if (StateCacheNode !== undefined) {
-            cch_hts++
+            StateCacheHits++
             return StateCacheNode
         }
         return evaluate_state(newBoard, player, hash, restrictions)
@@ -610,8 +610,8 @@ let CacheHits = 0;
 let Cutoffs = 0;
 let CacheCutoffs = 0;
 let CachePuts = 0;
-let cch_hts = 0;
-let cch_pts = 0;
+let StateCacheHits = 0;
+let StateCachePuts = 0;
 let t00 = performance.now(); 
 
 function search(player, depth) {
@@ -627,8 +627,8 @@ function search(player, depth) {
         CacheHits: CacheHits,
         CacheCutoffs: CacheCutoffs,
         CachePuts: CachePuts,
-        StateCacheHits: cch_hts,
-        StateCachePuts: cch_pts,
+        StateCacheHits: StateCacheHits,
+        StateCachePuts: StateCachePuts,
         fc: fc,
         time: (t1 - t0) / 1000
     })
