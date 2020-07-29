@@ -450,7 +450,7 @@ function evaluate_state(Board, player, hash, restrictions) {
         score = (white_score - black_score);
     }
     StateCache.set(hash,score);
-    cch_pts++;
+    StateCachePuts++;
     return score;
 }
 
@@ -533,7 +533,7 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
     if (depth === 0) {
         const StateCacheNode=StateCache.get(hash);
         if (StateCacheNode !== undefined) {
-            cch_hts++
+            StateCacheHits++
             return StateCacheNode
         }
         return evaluate_state(newBoard, player, hash, restrictions)
@@ -547,12 +547,12 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
     let b = beta;
     let bestscore = -Infinity;
     const bestMove={};
-    for (var y = 0; y < availSpots.length; y++) {
+    for (let y = 0; y < availSpots.length; y++) {
         let  i = availSpots[y].i;
         let j = availSpots[y].j;
         const newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
-        var restrictions_temp = Change_restrictions(restrictions, i, j)
+        const restrictions_temp = Change_restrictions(restrictions, i, j)
         let score = -negascout(newBoard, -player, depth - 1, -b, -alpha, newHash, restrictions_temp, i, j)
         if (score > alpha && score < beta && y > 0) {
             score = -negascout(newBoard, -player, depth - 1, -beta, -score, newHash, restrictions_temp, i, j)
@@ -617,8 +617,8 @@ let CacheHits = 0;
 let Cutoffs = 0;
 let CacheCutoffs = 0;
 let CachePuts = 0;
-let cch_hts = 0;
-let cch_pts = 0;
+let StateCacheHits = 0;
+let StateCachePuts = 0;
 let t00 = performance.now(); 
 function search(player, depth) {
     MaximumDepth = depth;
@@ -633,8 +633,8 @@ function search(player, depth) {
         CacheHits: CacheHits,
         CacheCutoffs: CacheCutoffs,
         CachePuts: CachePuts,
-        StateCacheHits: cch_hts,
-        StateCachePuts: cch_pts,
+        StateCacheHits: StateCacheHits,
+        StateCachePuts: StateCachePuts,
         fc: fc,
         time: (t1 - t0) / 1000
     })
