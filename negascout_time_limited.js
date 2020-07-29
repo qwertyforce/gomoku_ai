@@ -1,4 +1,4 @@
-var GameBoard = [
+const GameBoard = [
     //0 1  2  3  4  5  6  7  8  9  0  1  2  3  4      
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //0
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //1
@@ -7,7 +7,7 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //4
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //5
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //7
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], //7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //8
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //9
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //10
@@ -16,70 +16,44 @@ var GameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //14
 ]
-
-GameBoard[7][7] = 1;
-GameBoard[8][8] = -1;
-GameBoard[6][6] = 1;
-GameBoard[7][5] = -1;
-GameBoard[9][7] = 1;
-GameBoard[8][7] = -1;
-GameBoard[8][6] = 1;
-GameBoard[7][6] = -1;
-GameBoard[6][8] = 1;
-GameBoard[5][9] = -1;
-GameBoard[6][5] = 1;
-GameBoard[6][7] = -1;
-GameBoard[5][8] = 1;
-GameBoard[9][8] = -1;
-GameBoard[10][8] = 1;
-GameBoard[8][9] = -1;
-GameBoard[7][8] = 1;
-GameBoard[10][9] = -1;
-GameBoard[11][10] = 1;
-GameBoard[11][9] = -1;
-GameBoard[9][9] = 1;
-GameBoard[8][10] = -1;
-GameBoard[8][11] = 1;
-GameBoard[7][10] = -1;
-GameBoard[6][11] = 1;
-GameBoard[6][10] = -1;
-GameBoard[9][10] = 1;
-GameBoard[4][8] = -1;
-GameBoard[7][11] = 1;
-GameBoard[5][11] = -1;
-GameBoard[10][11]=1;
-GameBoard[9][11] = -1;
-GameBoard[12][9]=1;
-GameBoard[7][9] = -1;
-// GameBoard[8][3]=1;
-// GameBoard[3][3] = -1;
-// GameBoard[4][3]=1;
-// GameBoard[4][4] = -1;
-// GameBoard[2][2]=1;
-// GameBoard[2][10] = -1;
-// GameBoard[4][8]=1;
+// GameBoard[7][7] = 1;
+// GameBoard[8][8] = -1;
+// GameBoard[6][6] = 1;
+// GameBoard[7][5] = -1;
+// GameBoard[9][7] = 1;
+// GameBoard[8][7] = -1;
+// GameBoard[8][6] = 1;
+// GameBoard[7][6] = -1;
+// GameBoard[6][8] = 1;
+// GameBoard[5][9] = -1;
+// GameBoard[6][5] = 1;
+// GameBoard[6][7] = -1;
+// GameBoard[5][8] = 1;
+// GameBoard[9][8] = -1;
+// GameBoard[10][8] = 1;
+// GameBoard[8][9] = -1;
+// GameBoard[7][8] = 1;
+// GameBoard[10][9] = -1;
+// GameBoard[11][10] = 1;
+// GameBoard[11][9] = -1;
+// GameBoard[9][9] = 1;
+// GameBoard[8][10] = -1;
+// GameBoard[8][11] = 1;
+// GameBoard[7][10] = -1;
+// GameBoard[6][11] = 1;
 // GameBoard[6][10] = -1;
-// GameBoard[9][4]=1;
-// GameBoard[6][12] = -1;
-// GameBoard[6][11]=1;
-// GameBoard[11][6] = -1;
-// GameBoard[4][10]=1;
-// GameBoard[6][10] = -1;
-// GameBoard[7][12]=1;
-// GameBoard[6][12] = -1;
-// GameBoard[6][13]=1;
-// GameBoard[9][3] = -1;
-// GameBoard[7][11]=1;
-// GameBoard[7][13] = -1;
-// GameBoard[9][10]=1;
-// GameBoard[5][14] = -1;
-// GameBoard[10][11]=-1;
-
-
+// GameBoard[9][10] = 1;
+// GameBoard[4][8] = -1;
+// GameBoard[7][11] = 1;
+// GameBoard[5][11] = -1;
+// GameBoard[10][11]=1;
+// GameBoard[9][11] = -1;
+// GameBoard[12][9]=1;
+// GameBoard[7][9] = -1;
 
 const aiPlayer = 1;
 const huPlayer = -1;
-var fc = 0;
+let fc = 0;
 const FiguresToWin = 5;
 const Rows = GameBoard.length;
 const Columns = GameBoard[0].length
@@ -94,28 +68,17 @@ const LiveFour = 10000;
 const DeadFour = 1000;
 const Five = 100000;
 
-function check_directions(arr) {
-    for (var i = 0; i < arr.length - 4; i++) {
-        if (arr[i] !== 0) {
-            if (arr[i] === arr[i + 1] && arr[i] === arr[i + 2] && arr[i] === arr[i + 3] && arr[i] === arr[i + 4]) {
-                return true
-            }
-        }
-
-    }
-}
-
 function eval_board(Board, pieceType, restrictions) {
-    var score = 0;
-    let min_r = restrictions[0];
-    let min_c = restrictions[1];
-    let max_r = restrictions[2];
-    let max_c = restrictions[3];
-    for (var row = min_r; row < max_r + 1; row++) {
-        for (var column = min_c; column < max_c + 1; column++) {
+    let score = 0;
+    const min_r = restrictions[0];
+    const min_c = restrictions[1];
+    const max_r = restrictions[2];
+    const max_c = restrictions[3];
+    for (let row = min_r; row < max_r + 1; row++) {
+        for (let column = min_c; column < max_c + 1; column++) {
             if (Board[row][column] == pieceType) {
-                var block = 0;
-                var piece = 1;
+                let block = 0;
+                let piece = 1;
                 // left
                 if (column === 0 || Board[row][column - 1] !== 0) {
                     block++;
@@ -133,11 +96,11 @@ function eval_board(Board, pieceType, restrictions) {
         }
     }
 
-    for (var column = min_c; column < max_c + 1; column++) {
-        for (var row = min_r; row < max_r + 1; row++) {
+    for (let column = min_c; column < max_c + 1; column++) {
+        for (let row = min_r; row < max_r + 1; row++) {
             if (Board[row][column] == pieceType) {
-                var block = 0;
-                var piece = 1;
+                let block = 0;
+                let piece = 1;
                 // left
                 if (row === 0 || Board[row - 1][column] !== 0) {
                     block++;
@@ -155,14 +118,14 @@ function eval_board(Board, pieceType, restrictions) {
         }
     }
 
-    for (var n = min_r; n < (max_c - min_c + max_r); n += 1) {
-        var r = n;
-        var c = min_c;
+    for (let n = min_r; n < (max_c - min_c + max_r); n += 1) {
+        let r = n;
+        let c = min_c;
         while (r >= min_r && c <= max_c) {
             if (r <= max_r) {
                 if (Board[r][c] === pieceType) {
-                    var block = 0;
-                    var piece = 1;
+                    let block = 0;
+                    let piece = 1;
                     // left
                     if (c === 0 || r === Rows - 1 || Board[r + 1][c - 1] !== 0) {
                         block++;
@@ -186,14 +149,14 @@ function eval_board(Board, pieceType, restrictions) {
         }
     }
 
-    for (var n = min_r - (max_c - min_c); n <= max_r; n++) {
-        var r = n;
-        var c = 0;
+    for (let n = min_r - (max_c - min_c); n <= max_r; n++) {
+        let r = n;
+        let c = min_c;
         while (r <= max_r && c <= max_c) {
             if (r >= min_r && r <= max_r) {
                 if (Board[r][c] === pieceType) {
-                    var block = 0;
-                    var piece = 1;
+                    let block = 0;
+                    let piece = 1;
                     // left
                     if (c === 0 || r === 0 || Board[r - 1][c - 1] !== 0) {
                         block++;
@@ -256,9 +219,20 @@ function evaluateblock(blocks, pieces) {
     }
 }
 
+function check_directions(arr) {
+    for (let i = 0; i < arr.length - 4; i++) {
+        if (arr[i] !== 0) {
+            if (arr[i] === arr[i + 1] && arr[i] === arr[i + 2] && arr[i] === arr[i + 3] && arr[i] === arr[i + 4]) {
+                return true
+            }
+        }
+
+    }
+}
+
 function get_directions(Board, x, y) {
-    let Directions = [[],[],[],[]];
-    for (var i = -4; i < 5; i++) {
+    const Directions = [[],[],[],[]];
+    for (let i = -4; i < 5; i++) {
         if (x + i >= 0 && x + i <= Rows - 1) {
             Directions[0].push(Board[x + i][y])
             if (y + i >= 0 && y + i <= Columns - 1) {
@@ -277,8 +251,8 @@ function get_directions(Board, x, y) {
 }
 
 function checkwin(Board, x, y) {
-    let Directions = get_directions(Board, x, y)
-    for (var i = 0; i < 4; i++) {
+    const Directions = get_directions(Board, x, y)
+    for (let i = 0; i < 4; i++) {
         if (check_directions(Directions[i])) {
             return true
         }
@@ -286,9 +260,9 @@ function checkwin(Board, x, y) {
 }
 
 function remoteCell(Board, r, c) {
-    for (var i = r - 2; i <= r + 2; i++) {
+    for (let i = r - 2; i <= r + 2; i++) {
         if (i < 0 || i >= Rows) continue;
-        for (var j = c - 2; j <= c + 2; j++) {
+        for (let j = c - 2; j <= c + 2; j++) {
             if (j < 0 || j >= Columns) continue;
             if (Board[i][j] !== 0) return false;
         }
@@ -301,8 +275,8 @@ function Get_restrictions(Board) {
     let min_c = Infinity;
     let max_r = -Infinity;
     let max_c = -Infinity;
-    for (var i = 0; i < Rows; i++) {
-        for (var j = 0; j < Columns; j++) {
+    for (let i = 0; i < Rows; i++) {
+        for (let j = 0; j < Columns; j++) {
             if (Board[i][j] !== 0) {
                 min_r = Math.min(min_r, i)
                 min_c = Math.min(min_c, j)
@@ -364,21 +338,19 @@ function compare(a, b) {
     return 0;
 }
 
-
 function BoardGenerator(restrictions, Board, player) {
-    let availSpots_score = []; //c is j  r is i;
-    let min_r = restrictions[0];
-    let min_c = restrictions[1];
-    let max_r = restrictions[2];
-    let max_c = restrictions[3];
-    let move = {};
-    for (var i = min_r - 2; i <= max_r + 2; i++) {
-        for (var j = min_c - 2; j <= max_c + 2; j++) {
+    const availSpots_score = []; //c is j  r is i;
+    const min_r = restrictions[0];
+    const min_c = restrictions[1];
+    const max_r = restrictions[2];
+    const max_c = restrictions[3];;
+    for (let i = min_r - 2; i <= max_r + 2; i++) {
+        for (let j = min_c - 2; j <= max_c + 2; j++) {
             if (Board[i][j] === 0 && !remoteCell(Board, i, j)) {
-                move = {}
+                const move = {}
                 move.i = i;
                 move.j = j;
-                move.score = evalute_move(Board, i, j, player)
+                move.score = evaluate_move(Board, i, j, player)
                 if (move.score === WIN_DETECTED) {
                     return [move]
                 }
@@ -387,17 +359,16 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-    // return availSpots_score.slice(0,20)
+    //  return availSpots_score.slice(0,20)
     return availSpots_score;
 }
 
 function evaluate_direction(direction_arr, player) {
     let score = 0;
-    for (var i = 0;
-        (i + 4) < direction_arr.length; i++) {
+    for (let i = 0;(i + 4) < direction_arr.length; i++) {
         let you = 0;
         let enemy = 0;
-        for (var j = 0; j <= 4; j++) {
+        for (let j = 0; j <= 4; j++) {
             if (direction_arr[i + j] === player) {
                 you++
             } else if (direction_arr[i + j] === -player) {
@@ -453,11 +424,11 @@ function get_seq(y, e) {
     }
 }
 
-function evalute_move(Board, x, y, player) {
+function evaluate_move(Board, x, y, player) {
     let score = 0;
-    let Directions = get_directions(Board, x, y);
+    const Directions = get_directions(Board, x, y);
     let temp_score;
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         temp_score = evaluate_direction(Directions[i], player);
         if (temp_score === WIN_DETECTED) {
             return WIN_DETECTED
@@ -467,24 +438,23 @@ function evalute_move(Board, x, y, player) {
     }
     return score;
 }
-var StateCache = {};
+
 
 function evaluate_state(Board, player, hash, restrictions) {
-    var black_score = eval_board(Board, -1, restrictions);
-    var white_score = eval_board(Board, 1, restrictions);
-    var score = 0;
-    if (player = -1) {
-        score = -(black_score - white_score);
+    const  black_score = eval_board(Board, -1, restrictions);
+    const  white_score = eval_board(Board, 1, restrictions);
+    let score = 0;
+    if (player == -1) {
+        score = (black_score - white_score);
     } else {
-        score = -(white_score - black_score);
+        score = (white_score - black_score);
     }
-    StateCache[hash] = score;
-    cch_pts++;
+    StateCache.set(hash,score);
+    StateCachePuts++;
     return score;
 }
 
-var Table = []
-var Cache = {};
+
 
 function random32() {
     let o = new Uint32Array(1);
@@ -493,21 +463,23 @@ function random32() {
 }
 
 function Table_init() {
-    for (var i = 0; i < Rows; i++) {
+    for (let i = 0; i < Rows; i++) {
         Table[i] = [];
-        for (var j = 0; j < Columns; j++) {
+        for (let j = 0; j < Columns; j++) {
             Table[i][j] = []
             Table[i][j][0] = random32(); //1
             Table[i][j][1] = random32(); //2
         }
+
     }
+
 }
 
 function hash(board) {
     let h = 0;
     let p;
-    for (var i = 0; i < Rows; i++) {
-        for (var j = 0; j < Columns; j++) {
+    for (let i = 0; i < Rows; i++) {
+        for (let j = 0; j < Columns; j++) {
             let Board_value = board[i][j];
             if (Board_value !== 0) {
                 if (Board_value === -1) {
@@ -532,22 +504,22 @@ function update_hash(hash, player, row, col) {
     return hash
 }
 
-
 function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, last_i, last_j) {
     if (TIMEOUT()) {
         return 1
     }
-    var alphaOrig = alpha;
-    if ((Cache[hash] !== undefined) && (Cache[hash].depth >= depth)) {
+    const alphaOrig = alpha;
+    const CacheNode =Cache.get(hash)  
+    if ((CacheNode !== undefined) && (CacheNode.depth >= depth)) {
         CacheHits++;
-        let score = Cache[hash].score;
-        if (Cache[hash].Flag === 0) {
+        const score = CacheNode.score;
+        if (CacheNode.Flag === 0) {
             CacheCutoffs++;
             return score
         }
-        if (Cache[hash].Flag === -1) {
+        if (CacheNode.Flag === -1) {
             alpha = Math.max(alpha, score);
-        } else if (Cache[hash].Flag === 1) {
+        } else if (CacheNode.Flag === 1) {
             beta = Math.min(beta, score);
         }
         if (alpha >= beta) {
@@ -561,37 +533,38 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
         return -2000000 + (MaximumDepth - depth)
     }
     if (depth === 0) {
-        if (StateCache[hash] !== undefined) {
-            cch_hts++
-            return StateCache[hash]
+        const StateCacheNode=StateCache.get(hash);
+        if (StateCacheNode !== undefined) {
+            StateCacheHits++
+            return StateCacheNode
         }
         return evaluate_state(newBoard, player, hash, restrictions)
     }
-    var availSpots;
-    availSpots = BoardGenerator(restrictions, newBoard, player);
+
+    const availSpots = BoardGenerator(restrictions, newBoard, player);
     if (availSpots.length === 0) {
         return 0;
     }
 
-    var b = beta;
-    var bestscore = -Infinity;
-    var i, j, score;
-    var newHash;
-    var bestMove;
-    for (var y = 0; y < availSpots.length; y++) {
-        i = availSpots[y].i;
-        j = availSpots[y].j;
-        newHash = update_hash(hash, player, i, j)
+    let b = beta;
+    let bestscore = -Infinity;
+    const bestMove={};
+    for (let y = 0; y < availSpots.length; y++) {
+        let  i = availSpots[y].i;
+        let j = availSpots[y].j;
+        const newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
-        var restrictions_temp = Change_restrictions(restrictions, i, j)
-        score = -negascout(newBoard, -player, depth - 1, -b, -alpha, newHash, restrictions_temp, i, j)
+        const restrictions_temp = Change_restrictions(restrictions, i, j)
+        let score = -negascout(newBoard, -player, depth - 1, -b, -alpha, newHash, restrictions_temp, i, j)
         if (score > alpha && score < beta && y > 0) {
             score = -negascout(newBoard, -player, depth - 1, -beta, -score, newHash, restrictions_temp, i, j)
         }
         if (score > bestscore) {
             bestscore = score
             if (depth === MaximumDepth) {
-              bestMove = {i: i,j: j,score: score}
+                bestMove.i=i
+                bestMove.j=j
+                bestMove.score=score;
             }
         }
         newBoard[i][j] = 0;
@@ -602,16 +575,16 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
         b = alpha + 1;
     }
     CachePuts++
-    Cache[hash] = {score: bestscore};
-    Cache[hash].depth = depth;
+    const obj={score: bestscore,depth:depth};
     if (bestscore <= alphaOrig) {
-        Cache[hash].Flag = 1
-    } else if (bestscore >= beta) {
-        Cache[hash].Flag = -1
+        obj.Flag = 1
+    } else if (bestscore >= b) {
+        obj.Flag = -1
     } else {
-        Cache[hash].Flag = 0
+        obj.Flag = 0
     }
-    if (depth === MaximumDepth) {
+    Cache.set(hash,obj);
+    if (depth == MaximumDepth) {
         return bestMove
     } else {
         return bestscore
@@ -619,9 +592,8 @@ function negascout(newBoard, player, depth, alpha, beta, hash, restrictions, las
 }
 
 function iterative_negascout(player, Board) {
-    var bestmove;
-    var i = 2;
-    var depth = 2;
+    let bestmove;
+    let depth = 2;
     while (!TIMEOUT()) {
         let temp_bestmove;
         MaximumDepth = depth;
@@ -652,32 +624,35 @@ function TIMEOUT() {
     }
 }
 
-var MaximumDepth; //GLOBAL USED IN SEARCH FUNCTIONS
+const Table = []
+const Cache = new Map();
+const StateCache = new Map();
+let MaximumDepth; //GLOBAL USED IN SEARCH FUNCTION
 Table_init();
-var CacheHits = 0;
-var Cutoffs = 0;
-var CacheCutoffs = 0;
-var CachePuts = 0;
-var cch_hts = 0;
-var cch_pts = 0;
-var t00 = performance.now(); 
-var MaximumTimeForMove;
-var startTime
+let CacheHits = 0;
+let Cutoffs = 0;
+let CacheCutoffs = 0;
+let CachePuts = 0;
+let StateCacheHits = 0;
+let StateCachePuts = 0;
+let t00 = performance.now(); 
+let MaximumTimeForMove;
+let startTime
 function search(player, time) {
     startTime = Date.now();
     MaximumTimeForMove=time
-    var t0 = performance.now();
+    const t0 = performance.now();
     let bestmove = iterative_negascout(player,GameBoard)
-    var t1 = performance.now();
-    Cache = {}
-    StateCache = {}
+    const t1 = performance.now();
+    Cache.clear()
+    StateCache.clear()
     console.log({
         bestmove: bestmove,
         CacheHits: CacheHits,
         CacheCutoffs: CacheCutoffs,
         CachePuts: CachePuts,
-        StateCacheHits: cch_hts,
-        StateCachePuts: cch_pts,
+        StateCacheHits: StateCacheHits,
+        StateCachePuts: StateCachePuts,
         fc: fc,
         time: (t1 - t0) / 1000
     })
