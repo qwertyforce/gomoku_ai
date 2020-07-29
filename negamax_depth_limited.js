@@ -540,46 +540,31 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
     }
 
     const availSpots = BoardGenerator(restrictions, newBoard, player);
-
-    // console.log(availSpots.length)
     if (availSpots.length === 0) {
         return 0;
     }
 
-    let bestMove;
-    let i, j;
-    let newHash;
+    const bestMove={};
     let bestvalue = -Infinity
-    let value;
-    // console.log("============"+last_i+" "+last_j)
-    // for (var y = 0; y < availSpots.length; y++) {
-    //     console.log(availSpots[y].i,availSpots[y].j,availSpots[y].score)
-    // }
-    // console.log("============")
     for (let y = 0; y < availSpots.length; y++) {
-        i = availSpots[y].i;
-        j = availSpots[y].j;
-        newHash = update_hash(hash, player, i, j)
+        let  i = availSpots[y].i;
+        let j  = availSpots[y].j;
+        const newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
         const restrictions_temp = Change_restrictions(restrictions, i, j)
-        value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
-        // console.log(i,j,value)
+        let value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
         newBoard[i][j] = 0;
         if (value > bestvalue) {
             bestvalue = value
             if (depth == MaximumDepth) {
-                bestMove = {i: i,j: j,score: value}
-                console.log(bestMove)
+                bestMove.i=i
+                bestMove.j=j
+                bestMove.score=value;
+                // console.log(bestMove)
             }
         }
-        // console.log("========ab=========")
-        // console.log(a,b)
         a = Math.max(a, value)
-        // console.log(a,b)
-        // console.log("========abend=========")
         if (a >= b) {
-            // console.log("AB")
-            // dergef++
             break;
         }
     }
@@ -648,11 +633,4 @@ function search(player, depth) {
         time: (t1 - t0) / 1000
     })
 }
-///console.log(BoardGenerator(Get_restrictions(GameBoard),GameBoard,1))
-// console.log(Get_restrictions(GameBoard))
-// console.log(eval_board(GameBoard,1,Get_restrictions(GameBoard)))
-// console.log(hash(GameBoard))
-// console.log(evaluate_state(GameBoard,1,0,Get_restrictions(GameBoard)))
-// var dergef=0;
-search(1,6);
-// console.log(dergef)
+search(1,8);
