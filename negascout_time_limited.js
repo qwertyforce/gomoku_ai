@@ -605,7 +605,7 @@ function iterative_negascout(player, Board) {
         //  Set_last_best(bestmove)
         console.log(depth)
         console.log(bestmove)
-        var t11 = performance.now();
+        const t11 = performance.now();
         console.log((t11 - t00) / 1000)
         if (bestmove.score > 1999900) {
             break;
