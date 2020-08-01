@@ -321,7 +321,7 @@ function BoardGenerator(restrictions, Board, player) {
         }
     }
     availSpots_score.sort(compare);
-    return availSpots_score.slice(0,20)
+    return availSpots_score.slice(0,10)
     //return availSpots_score;
 }
 
