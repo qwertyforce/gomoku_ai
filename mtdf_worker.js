@@ -1,8 +1,5 @@
 let GameBoard;
-const aiPlayer = 1;
-const huPlayer = -1;
 let fc = 0;
-const FiguresToWin = 5;
 let Rows;
 let Columns;
 const WIN_DETECTED = false;

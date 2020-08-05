@@ -51,10 +51,7 @@ const GameBoard = [
 // GameBoard[12][9]=1;
 // GameBoard[7][9] = -1;
 
-const aiPlayer = 1;
-const huPlayer = -1;
 let fc = 0;
-const FiguresToWin = 5;
 const Rows = GameBoard.length;
 const Columns = GameBoard[0].length
 const WIN_DETECTED = false;
