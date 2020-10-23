@@ -210,7 +210,7 @@ function Get_last_best() {
 }
 
 function Set_last_best(bestmove) {
-    for (var i = 0; i < bestmoves.length; i++) {
+    for (let i = 0; i < bestmoves.length; i++) {
         if (bestmoves[i].i === bestmove.i && bestmoves[i].j === bestmove.j) {
             bestmoves.splice(i, 1);
         }
@@ -579,12 +579,12 @@ function negamax(newBoard, player, depth, a, b, hash, restrictions, last_i, last
 
     const bestMove={};
     let bestvalue = -Infinity
-    for (var y = 0; y < availSpots.length; y++) {
+    for (let y = 0; y < availSpots.length; y++) {
         let i = availSpots[y].i;
         let j  = availSpots[y].j;
         const newHash = update_hash(hash, player, i, j)
         newBoard[i][j] = player;
-        var restrictions_temp = Change_restrictions(restrictions, i, j)
+        const restrictions_temp = Change_restrictions(restrictions, i, j)
         const value = -negamax(newBoard, -player, depth - 1, -b, -a, newHash, restrictions_temp, i, j)
         newBoard[i][j] = 0;
         if (value > bestvalue) {
@@ -656,16 +656,16 @@ function search() {
 }
 onmessage = function(e) {
     const Board = e.data[0]
-    var Turn = e.data[1]
+    // const Turn = e.data[1]
     MaximumTimeForMove = e.data[2]
     console.log(e.data)
     if (Board) {
         GameBoard = Board;
         Rows = GameBoard.length;
         Columns = GameBoard[0].length
-        var sum = 0;
-        for (var x = 0; x < Rows; x++) {
-            for (var y = 0; y < Columns; y++) {
+        let sum = 0;
+        for (let x = 0; x < Rows; x++) {
+            for (let y = 0; y < Columns; y++) {
                 if (GameBoard[x][y] !== 0) {
                     sum++
                 }
@@ -693,7 +693,7 @@ onmessage = function(e) {
         StateCachePuts = 0;
         fc = 0;
         Table_init();
-        var results = search();
+        const results = search();
         postMessage(results)
     }
 }
