@@ -9,3 +9,4 @@ You can see this error while opening html files in Chrome <br>
 Chrome doesn't let you load web workers from a local file.
 https://stackoverflow.com/questions/21408510/chrome-cant-load-web-worker
 https://stackoverflow.com/questions/17679399/does-disable-web-security-work-in-chrome-anymore/36939693
+c++ version - https://github.com/qwertyforce/gomoku_ai_c
