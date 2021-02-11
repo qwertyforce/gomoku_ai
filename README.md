@@ -1,5 +1,6 @@
 # gomoku_ai
 https://qwertyforce.dev/gomoku_ai.pdf [RU]<br>
+https://habr.com/ru/post/541564/ [RU]<br>
 Experiments with variations of minimax algorithm, MTD(f), MCTS in Gomoku  <br>
 mtdf(10) - dangerous pruning, can lead to unexpected loss <br>
 Main ai agent is in mtdf(10)_worker.js. You can play against ai here https://4battle.ru/play_offline
